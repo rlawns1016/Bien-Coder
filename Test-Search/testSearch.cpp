@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "../TestHello/isearch.h"
+#include "../Test-Search/isearch.h"
 
 TEST(SearchCase, SearchByName) {
   

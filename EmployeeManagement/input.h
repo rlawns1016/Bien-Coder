@@ -2,36 +2,40 @@
 
 #include "mainFrame.h"
 
-enum OP_CODE {
-	ADD = 1,
+enum class OP_CODE {
+	ADD,
 	DEL,
 	SCH,
-	MOD
+	MOD,
+	UNKNOWN
 };
 
-enum OPTION_1 {
-	NO_PRINT = 1,
-	PRINT_WITH_5RECORD
+enum class OPTION_1 {
+	PRINT_EMPTY,
+	PRINT_WITH_5RECORD,
+	PRINT_UNKNOWN
 };
 
-enum OPTION_2 {
-	CONDITION_EMPTY = 1,
+enum class OPTION_2 {
+	CONDITION_EMPTY,
 	CONDITION_BY_FIRSTNAME,
 	CONDITION_BY_LASTNAME,
 	CONDITION_BY_MIDPHONENUM,
 	CONDITION_BY_LASTPHONENUM,
 	CONDITION_BY_YEAR,
 	CONDITION_BY_MONTH,
-	CONDITION_BY_DAY
+	CONDITION_BY_DAY,
+	CONDITION_UNKNOWN
 };
 
-enum COLUMN_NAME {
-	CN_EMPLOYEE_NUM = 1,
+enum class COLUMN_NAME {
+	CN_EMPLOYEE_NUM,
 	CN_NAME,
 	CN_CL,
 	CN_PHONE_NUM,
 	CN_BIRTHDAY,
-	CN_CERTI
+	CN_CERTI,
+	CN_UNKNOWN
 };
 
 
@@ -39,11 +43,9 @@ enum COLUMN_NAME {
 class Instruction {
 
 protected :
-	enum OP_CODE operationCode_;
-	enum OPTION_1 print_;
-	enum OPTION_2 condition_;
-	enum COLUMN_NAME columnName_;
-	string columnValue_;
+	OP_CODE operationCode_;
+	OPTION_1 print_;
+	OPTION_2 condition_;	
 };
 
 class InstructionAdd : public Instruction {
@@ -53,17 +55,25 @@ private :
 };
 
 class InstructionDel : public Instruction {
-
+	
+private:
+	COLUMN_NAME columnName_;
+	string columnValue_;
 };
 
 class InstructionSch : public Instruction {
 
+private:
+	COLUMN_NAME columnName_;
+	string columnValue_;
 };
 
 class InstructionMod : public Instruction {
 
 private :
-	enum COLUMN_NAME columnName2nd_;
+	COLUMN_NAME columnName1st_;
+	string columnValue1st_;
+	COLUMN_NAME columnName2nd_;
 	string columnValue2nd_;
 };
 

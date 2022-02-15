@@ -1,21 +1,25 @@
 #include "input.h"
 
 OP_CODE Instruction::GetOperationCode() {
-	return OP_CODE::UNKNOWN;
+	return this->operationCode_;
 }
 
 OPTION_1 Instruction::GetPrintOption() {
-	return OPTION_1::PRINT_UNKNOWN;
+	return this->print_;
 }
 
 OPTION_2 Instruction::GetCondition() {
-	return OPTION_2::CONDITION_UNKNOWN;
+	return this->condition_;
 }
 
-bool InstructionAdd::SetInstruction(const OP_CODE op, const OPTION_1 opt1, const OPTION_2 opt2, const EmployeeInfo& e) {
-	return false;
+void InstructionAdd::SetInstruction(const OP_CODE op, const OPTION_1 opt1, const OPTION_2 opt2, const EmployeeInfo& e) {
+	this->operationCode_ = op;
+	this->print_ = opt1;
+	this->condition_ = opt2;
+	this->employee_ = e;
+	
 }
 
-bool InstructionAdd::GetEmployeeInfo(EmployeeInfo& e) {
-	return false;
+void InstructionAdd::GetEmployeeInfo(EmployeeInfo& e) {
+	e = this->employee_;
 }

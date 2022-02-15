@@ -8,11 +8,9 @@ TEST(InputTest, InstructionAddClassTest) {
 	OPTION_2 inputOption2 = OPTION_2::CONDITION_EMPTY;
 	EmployeeInfo inputEmployee = { 2000123456,{ "GILDONG", "KIM" },CL::CL1,{ 1234,5678 },{ 1990,1,1 },CERTI::ADV };
 	InstructionAdd* ins = new InstructionAdd();
-	bool resultSetInstruction = ins->SetInstruction(inputOp, inputOption1, inputOption2, inputEmployee);
+	ins->SetInstruction(inputOp, inputOption1, inputOption2, inputEmployee);
 	EmployeeInfo outputEmployee;
-	bool resultGetEmployeeInfo = ins->GetEmployeeInfo(outputEmployee);
-	EXPECT_EQ(true, resultSetInstruction);
-	EXPECT_EQ(true, resultGetEmployeeInfo);
+	ins->GetEmployeeInfo(outputEmployee);
 	EXPECT_EQ(inputOp, ins->GetOperationCode());
 	EXPECT_EQ(inputOption1, ins->GetPrintOption());
 	EXPECT_EQ(inputOption2, ins->GetCondition());
@@ -27,3 +25,4 @@ TEST(InputTest, InstructionAddClassTest) {
 	EXPECT_EQ(inputEmployee.certi, outputEmployee.certi);
 	delete ins;
 }
+

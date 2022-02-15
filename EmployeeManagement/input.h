@@ -54,8 +54,8 @@ protected:
 
 class InstructionAdd : public Instruction {
 public:
-	bool SetInstruction(const OP_CODE op, const OPTION_1 opt1, const OPTION_2 opt2, const EmployeeInfo& e);
-	bool GetEmployeeInfo(EmployeeInfo& e);
+	void SetInstruction(const OP_CODE op, const OPTION_1 opt1, const OPTION_2 opt2, const EmployeeInfo& e);
+	void GetEmployeeInfo(EmployeeInfo& e);
 
 private:
 	EmployeeInfo employee_;

@@ -1,9 +1,10 @@
 #include "pch.h"
 
 #include "pch.h"
-#include "../EmployeeManagement/ISCH.h"
+//#include "../EmployeeManagement/ISCH.h"
+#include "../EmployeeManagement/NaiveSCH.cpp"
 
-TEST(SearchCase, SearchByName) {
+TEST(SchCase, SchByName) {
 
 	//input...
 	vector <EmployeeInfo> employees;
@@ -14,6 +15,10 @@ TEST(SearchCase, SearchByName) {
 	//SCH »ý¼º
 	ISCH* sch = new NaiveSCH(employees);
 	vector <EmployeeInfo*> result;
+
+	result = sch->searchByName({ "KIM", "GILDONG" });
+	EXPECT_EQ(result[0]->name.first, "KIM");
+	EXPECT_EQ(result[0]->name.last, "GILDONG");
 
 	result = sch->searchByFirstName("KIM");
 	EXPECT_EQ(result[0]->name.first, "KIM");

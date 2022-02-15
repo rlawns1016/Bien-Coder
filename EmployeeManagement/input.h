@@ -2,19 +2,19 @@
 
 #include "mainFrame.h"
 
-enum {
+enum OP_CODE {
 	ADD = 1,
 	DEL,
 	SCH,
 	MOD
-} OP_CODE;
+};
 
-enum {
+enum OPTION_1 {
 	NO_PRINT = 1,
 	PRINT_WITH_5RECORD
-} OPTION_1;
+};
 
-enum {
+enum OPTION_2 {
 	CONDITION_EMPTY = 1,
 	CONDITION_BY_FIRSTNAME,
 	CONDITION_BY_LASTNAME,
@@ -23,16 +23,16 @@ enum {
 	CONDITION_BY_YEAR,
 	CONDITION_BY_MONTH,
 	CONDITION_BY_DAY
-} OPTION_2;
+};
 
-enum {
+enum COLUMN_NAME {
 	CN_EMPLOYEE_NUM = 1,
 	CN_NAME,
 	CN_CL,
 	CN_PHONE_NUM,
 	CN_BIRTHDAY,
 	CN_CERTI
-} COLUMN_NAME;
+};
 
 
 

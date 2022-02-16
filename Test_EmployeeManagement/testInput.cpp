@@ -75,3 +75,26 @@ TEST(InputTest, InputFromFileClassTest_DEL) {
 	input->Close();
 	delete input;
 }
+
+TEST(InputTest, InputFromFileClassTest_MOD) {
+	string inputPath = "./input_MOD.txt";
+	Instruction* outputIns = nullptr;
+	InputFromFile* input = new InputFromFile();
+	bool resultOpen = input->Open(inputPath);
+	bool resultReadLine = input->ReadLine(&outputIns);
+	ASSERT_EQ(true, resultOpen);
+	ASSERT_EQ(true, resultReadLine);
+	ASSERT_NE(nullptr, outputIns);
+	EXPECT_EQ(OP_CODE::MOD, outputIns->GetOperationCode());
+	EXPECT_EQ("-p", outputIns->GetOption1());
+	EXPECT_EQ(" ", outputIns->GetOption2());
+
+	string columnName1st, columnValue1st, columnName2nd, columnValue2nd;
+	outputIns->GetColumnData(columnName1st, columnValue1st, columnName2nd, columnValue2nd);
+	EXPECT_EQ("name", columnName1st);
+	EXPECT_EQ("FB NTAWR", columnValue1st);
+	EXPECT_EQ("birthday", columnName2nd);
+	EXPECT_EQ("20050520", columnValue2nd);
+	input->Close();
+	delete input;
+}

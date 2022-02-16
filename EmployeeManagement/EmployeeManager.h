@@ -1,0 +1,88 @@
+#pragma once
+
+#include "mainFrame.h"
+#include "IADD.h"
+#include "ISCH.h"
+#include "IDEL.h"
+#include "IMOD.h"
+#include "input.h"
+//#include "output.h"
+#include<string>
+
+#define ERROR_CODE_NO_ERROR				1
+#define ERROR_CODE_INVALID_INSTRUCTION	-1
+#define ERROR_CODE_CANNOT_OPEN_FILE		-2
+#define ERROR_CODE_CANNOT_READ_LINE		-3
+
+class EmployeeManager {
+public:
+	EmployeeManager() {}
+
+	int run(string inputFIleName, string outputFileName)
+	{
+		int ret = ERROR_CODE_NO_ERROR;
+		//input
+		Instruction* ins = nullptr;
+		InputFromFile* input = new InputFromFile();
+		bool resultOpen = input->Open(inputFIleName);
+		bool resultReadLine = input->ReadLine(&ins);
+		
+		//output
+
+		//db
+		IDataBase* db = new DataBase();
+		vector<EmployeeInfo> result;
+
+		if (!resultOpen)	ret = ERROR_CODE_CANNOT_OPEN_FILE;
+		else if (!resultReadLine)	ret = ERROR_CODE_CANNOT_READ_LINE;
+		else
+		{
+			switch (ins->GetOperationCode())
+			{
+				case OP_CODE::ADD:
+				{
+					IADD* add = new ADD(db);
+					InstructionAdd* addIns = (InstructionAdd*)ins;
+					EmployeeInfo info;
+					addIns->GetEmployeeInfo(info);
+					add->execute(info);
+					break;
+				}
+				case OP_CODE::DEL:
+				{
+					IDEL* del = new DEL(db);
+					InstructionDel* delIns = (InstructionDel*)ins;
+					//del->execute(~);
+					//save result to outputFile
+					break;
+				}
+				case OP_CODE::SCH:
+				{
+					//ISCH* sch = new SCH(db);
+					InstructionSch* schIns = (InstructionSch*)ins;
+					//sch->execute(~);
+					//save result to outputFile
+					break;
+				}
+				case OP_CODE::MOD:
+				{
+					//IMOD* mod = new MOD(db);
+					InstructionMod* modIns = (InstructionMod*)ins;
+					//mod->execute(~);
+					//save result to outputFile
+					break;
+				}
+				default:
+					ret = ERROR_CODE_INVALID_INSTRUCTION;
+					break;
+			}
+
+		}
+
+		return ret;
+	}
+
+
+private:	
+
+};

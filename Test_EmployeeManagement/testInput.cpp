@@ -28,13 +28,13 @@ TEST(InputTest, InstructionAddClassTest) {
 
 TEST(InputTest, InputFromFileClassTest) {
 	string inputPath = "./input_20_20.txt";
-	Instruction outputIns;
+	Instruction* outputIns = nullptr;
 	InputFromFile* input = new InputFromFile();
 	bool resultOpen = input->Open(inputPath);
-	bool resultReadLine = input->ReadLine(outputIns);
+	bool resultReadLine = input->ReadLine(&outputIns);
 	ASSERT_EQ(true, resultOpen);
 	ASSERT_EQ(true, resultReadLine);
-	EXPECT_EQ(OP_CODE::ADD, outputIns.GetOperationCode());
-	EXPECT_EQ("", outputIns.GetOption1());
-	EXPECT_EQ("", outputIns.GetOption2());
+	EXPECT_EQ(OP_CODE::ADD, outputIns->GetOperationCode());
+	EXPECT_EQ("", outputIns->GetOption1());
+	EXPECT_EQ("", outputIns->GetOption2());
 }

@@ -98,8 +98,8 @@ private:
 
 class InstructionMod : public Instruction {
 public:
-	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName1, const string cValue1, const string cName2, const string cValue2) {}
-	virtual void GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) override {}
+	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName1, const string cValue1, const string cName2, const string cValue2);
+	virtual void GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) override;
 
 public:
 	virtual void GetEmployeeInfo(EmployeeInfo& e) override { throw exception(); }

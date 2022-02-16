@@ -12,7 +12,7 @@ TEST(SCHCase, SearchTest) {
 	vector<EmployeeInfo> resultSet;
 	int resultCnt;
 
-	resultCnt = sch->execute("-p", "", "emplyeeNum", "00123456", resultSet);
+	resultCnt = sch->execute("-p", "", "employeeNum", "00123456", resultSet);
 	EXPECT_EQ(resultSet[0].name.first, "KIM");
 	EXPECT_EQ(resultCnt, 1);
 

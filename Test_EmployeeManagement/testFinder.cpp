@@ -12,7 +12,7 @@ TEST(FinderCase, SearchIterator) {
 	IFinder* sch = new Finder(employees);
 	vector <list<EmployeeInfo>::iterator> result;
 
-	result = sch->searchIterator("", "emplyeeNum", "00123456");
+	result = sch->searchIterator("", "employeeNum", "00123456");
 	EXPECT_EQ(result[0]->name.first, "KIM");
 
 	result = sch->searchIterator("-l", "name", "GILDONG");

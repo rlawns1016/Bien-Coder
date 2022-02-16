@@ -84,8 +84,8 @@ private:
 
 class InstructionSch : public Instruction {
 public:
-	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue) {}
-	virtual void GetColumnData(string& columnName, string& columnValue) override {}
+	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue);
+	virtual void GetColumnData(string& columnName, string& columnValue) override;
 
 public:
 	virtual void GetEmployeeInfo(EmployeeInfo& e) override { throw exception(); }

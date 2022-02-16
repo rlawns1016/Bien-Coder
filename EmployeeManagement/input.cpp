@@ -53,6 +53,19 @@ void InstructionMod::GetColumnData(string& columnName1st, string& columnValue1st
 	columnValue2nd = this->columnValue2nd_;
 }
 
+void InstructionSch::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue) {
+	this->operationCode_ = op;
+	this->option1_ = opt1;
+	this->option2_ = opt2;
+	this->columnName_ = cName;
+	this->columnValue_ = cValue;
+}
+
+void InstructionSch::GetColumnData(string& columnName, string& columnValue) {
+	columnName = this->columnName_;
+	columnValue = this->columnValue_;
+}
+
 
 bool InputFromFile::Open(string path) {
 	fileStream.open(path);
@@ -260,6 +273,17 @@ bool InputFromFile::CreateInstructionMod(Instruction** ins, const OP_CODE opCode
 }
 
 bool InputFromFile::CreateInstructionSch(Instruction** ins, const OP_CODE opCode, const string& option1, const string& option2, const string& payload) {
+	string payloadSubStr = payload;
+	size_t payloadLength = payload.length();
+	size_t payloadPos;
 
-	return false;
+	payloadPos = payloadSubStr.find(',');
+	string columnName = payloadSubStr.substr(0, payloadPos);
+	string columnValue = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
+
+	insSch.SetInstruction(opCode, option1, option2, columnName, columnValue);
+
+	*ins = &insSch;
+
+	return true;
 }

@@ -26,7 +26,7 @@ TEST(InputTest, InstructionAddClassTest) {
 	delete ins;
 }
 
-TEST(InputTest, InputFromFileClassTest) {
+TEST(InputTest, InputFromFileClassTest_ADD) {
 	string inputPath = "./input_20_20.txt";
 	Instruction* outputIns = nullptr;
 	InputFromFile* input = new InputFromFile();
@@ -51,6 +51,27 @@ TEST(InputTest, InputFromFileClassTest) {
 	EXPECT_EQ(12, e.birthday.m);
 	EXPECT_EQ(11, e.birthday.d);
 	EXPECT_EQ(CERTI::ADV, e.certi);
+	input->Close();
+	delete input;
+}
 
+TEST(InputTest, InputFromFileClassTest_DEL) {
+	string inputPath = "./input_DEL.txt";
+	Instruction* outputIns = nullptr;
+	InputFromFile* input = new InputFromFile();
+	bool resultOpen = input->Open(inputPath);
+	bool resultReadLine = input->ReadLine(&outputIns);
+	ASSERT_EQ(true, resultOpen);
+	ASSERT_EQ(true, resultReadLine);
+	ASSERT_NE(nullptr, outputIns);
+	EXPECT_EQ(OP_CODE::DEL, outputIns->GetOperationCode());
+	EXPECT_EQ("-p", outputIns->GetOption1());
+	EXPECT_EQ("-l", outputIns->GetOption2());
+
+	string columnName, columnValue;
+	outputIns->GetColumnData(columnName, columnValue);
+	EXPECT_EQ("name", columnName);
+	EXPECT_EQ("MPOSXU", columnValue);
+	input->Close();
 	delete input;
 }

@@ -1,22 +1,23 @@
 #pragma once
 #include "mainFrame.h"
-#include <vector>
+#include "IDataBase.h"
 
 struct IADD {
-	virtual void AddEmployeeInfo(const EmployeeInfo& info) = 0;
+	virtual int execute(const EmployeeInfo& info) = 0;
 };
 
 class ADD : public IADD {
 
 public:
-	ADD(vector<EmployeeInfo>& employee) : employee_(employee) {}
+	ADD(IDataBase* db) : db_(db) {
+	}
 
-	virtual void AddEmployeeInfo(const EmployeeInfo& info) override
+	virtual int execute(const EmployeeInfo& info) override
 	{
-		employee_.push_back(info);
+		return db_->add(info);
 	}
 
 private:
-	vector<EmployeeInfo>& employee_;
+	IDataBase* db_;
 };
 

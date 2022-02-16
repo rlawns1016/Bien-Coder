@@ -1,48 +1,27 @@
-//#include "gtest/gtest.h"
 #include "pch.h"
 #include "../EmployeeManagement/IADD.h"
-#include "../EmployeeManagement/ISCH.h"
 
+TEST(AddCase, AddAndGetFromDB) {
 
-TEST(AddCase, AddOnly) {
+	IDataBase* db = new DataBase();
+	IADD* add = new ADD(db);
 
-	//input...
-	vector <EmployeeInfo> employees;
-	IADD* iADD = new ADD(employees);
-	iADD->AddEmployeeInfo({ 2000123456,{ "KIM","GILDONG" },CL::CL1,{ 1234,5678 },{ 1990,1,1 },CERTI::ADV });
-	iADD->AddEmployeeInfo({ 2001123456,{ "HONG","GILDONG" },CL::CL2,{ 1235,5678 },{ 1991,1,1 },CERTI::PRO });
-	iADD->AddEmployeeInfo({ 2002123456,{ "CHOI","GILDONG" },CL::CL3,{ 1236,5678 },{ 1992,1,1 },CERTI::EX });
+	add->execute({ 2000123456, {"KIM","GILDONG"},CL::CL1,{1,5678},{1990,1,1},CERTI::ADV });
+	add->execute({ 2001123456, {"KIM","GOLDONG"},CL::CL1,{2,5678},{1990,1,1},CERTI::ADV });
+	add->execute({ 2002123456, {"HONG","GILDONG"},CL::CL2,{3,5678},{1991,1,1},CERTI::PRO });
+	add->execute({ 2003123456, {"KIM","GOLDONG"},CL::CL1,{4,5678},{1990,1,1},CERTI::ADV });
+	add->execute({ 2004123456, {"CHOI","GILDONG"},CL::CL3,{5,5678},{1992,1,1},CERTI::EX });
 
-	EXPECT_EQ(employees[0].employeeNum, 2000123456);
-	EXPECT_EQ(employees[0].phoneNum.mid, 1234);
-	EXPECT_EQ(employees[1].name.first, "GILDONG");
-	EXPECT_EQ(employees[1].birthday.m, 1);
-	EXPECT_EQ(employees[2].cl, CL::CL3);
-	EXPECT_EQ(employees[2].certi, CERTI::EX);
-	EXPECT_EQ(employees.size(), 3);
+	EXPECT_EQ(db->getEmployeeCount(), 5);
+	
+	EmployeeInfo* info;
+	info = db->getEmployeeInfo(2000123456);
+	EXPECT_EQ(info->certi, CERTI::ADV);
+	EXPECT_EQ(info->cl, CL::CL1);
+	info = db->getEmployeeInfo(2003123456);
+	EXPECT_EQ(info->birthday.y, 1990);
+	EXPECT_EQ(info->name.first, "KIM");
 
-	delete iADD;
-}
-
-TEST(AddandSearchCase, SearchAfterAdd) {
-
-	vector <EmployeeInfo> employees;
-	IADD* iADD = new ADD(employees);
-	iADD->AddEmployeeInfo({ 2000123456,{ "GILDONG", "KIM", },CL::CL1,{ 1234,5678 },{ 1990,1,1 },CERTI::ADV });
-	iADD->AddEmployeeInfo({ 2001123456,{ "GILDONG", "HONG" },CL::CL2,{ 1235,5678 },{ 1991,1,1 },CERTI::PRO });
-	iADD->AddEmployeeInfo({ 2002123456,{ "GILDONG", "CHOI" },CL::CL3,{ 1236,5678 },{ 1992,1,1 },CERTI::EX });
-
-	ISCH* sch = new NaiveSCH(employees);
-	vector <EmployeeInfo*> result;
-	result = sch->searchByFirstName("GILDONG");
-	EXPECT_EQ(result[0]->name.first, "GILDONG");
-
-	result = sch->searchByLastName("HONG");
-	EXPECT_EQ(result.size(), 1);
-
-	result = sch->searchByLastName("PARK");
-	EXPECT_EQ(result.size(), 0);
-
-	delete iADD;
-	delete sch;
+	delete add;
+	delete db;
 }

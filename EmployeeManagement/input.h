@@ -45,6 +45,8 @@ public:
 	OP_CODE GetOperationCode();
 	string GetOption1();
 	string GetOption2();
+	virtual void GetEmployeeInfo(EmployeeInfo& e) = 0;
+	virtual void GetColumnData() = 0;
 
 protected:
 	OP_CODE operationCode_;
@@ -55,13 +57,17 @@ protected:
 class InstructionAdd : public Instruction {
 public:
 	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const EmployeeInfo& e);
-	void GetEmployeeInfo(EmployeeInfo& e);
+	virtual void GetEmployeeInfo(EmployeeInfo& e) override;
+	virtual void GetColumnData() override { throw exception(); }
 
 private:
 	EmployeeInfo employee_;
 };
 
 class InstructionDel : public Instruction {
+public:
+	virtual void GetEmployeeInfo(EmployeeInfo& e) override { throw exception(); }
+	virtual void GetColumnData() override {}
 
 private:
 	string columnName_;
@@ -69,6 +75,9 @@ private:
 };
 
 class InstructionSch : public Instruction {
+public:
+	virtual void GetEmployeeInfo(EmployeeInfo& e) override { throw exception(); }
+	virtual void GetColumnData() override {}
 
 private:
 	string columnName_;
@@ -76,6 +85,9 @@ private:
 };
 
 class InstructionMod : public Instruction {
+public:
+	virtual void GetEmployeeInfo(EmployeeInfo& e) override { throw exception(); }
+	virtual void GetColumnData() override {}
 
 private:
 	string columnName1st_;

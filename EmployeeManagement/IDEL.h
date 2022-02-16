@@ -1,5 +1,5 @@
 #pragma once
-#include "IFinder.h"
+#include "IDataBase.h"
 
 struct IDEL {
 	virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet) = 0;
@@ -7,23 +7,22 @@ struct IDEL {
 
 class DEL : public IDEL {
 public:
-	DEL(IFinder* finder, list<EmployeeInfo>& employee) : finder_(finder), employee_(employee) {
+	DEL(IDataBase* db) : db_(db) {
 	}
 
 	virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet) override {
 		resultSet.clear();
-		vector <list<EmployeeInfo>::iterator> its;
-		its = finder_->searchIterator(option2, column, param);
-		for (auto it : its) {
+		vector<unsigned int> pks;
+		int result = 0;
+		pks = db_->search(option2, column, param);
+		for (auto aKey : pks) {
 			if (option1 == "-p") {
-				resultSet.push_back(*it);
+				resultSet.push_back(*db_->getEmployeeInfo(aKey));
 			}
-			employee_.erase(it);
+			result += (int)db_->erase(aKey);
 		}
-			// TODO :: check over 5
-		return its.size();
+		return result;
 	}
 private:
-	IFinder* finder_;
-	list<EmployeeInfo>& employee_;
+	IDataBase* db_;
 };

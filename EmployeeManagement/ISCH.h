@@ -1,41 +1,27 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include "mainFrame.h"
-
-using namespace std;
+#include "IFinder.h"
 
 struct ISCH {
-	virtual vector<EmployeeInfo*> searchByFirstName(string name) = 0;
-	virtual vector<EmployeeInfo*> searchByLastName(string name) = 0;
-	//virtual vector<Employee*> searchByMidPhoneNumber(string numeber) = 0;
-	//virtual vector<Employee*> searchByLastPhoneNumber(string number) = 0;
-	//virtual vector<Employee*> searchByBirthYear(string year) = 0;
-	//virtual vector<Employee*> searchByBirthMonth(string month) = 0;
-	//virtual vector<Employee*> searchByBirthDay(string day) = 0;
+	virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet) = 0;
 };
 
-class NaiveSCH : public ISCH {
+class SCH : public ISCH {
 public:
-	NaiveSCH(vector<EmployeeInfo>& employee) : employee_(employee) {
+	SCH(IFinder* finder) : finder_(finder) {
 	}
 
-	virtual vector<EmployeeInfo*> searchByFirstName(string name) override {
-		vector<EmployeeInfo*> result;
-		for (auto it = employee_.begin(); it != employee_.end(); ++it) {
-			if (it->name.first == name) result.push_back(&( * it));
+	virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet) override {
+		resultSet.clear();
+		vector <list<EmployeeInfo>::iterator> its;
+		its = finder_->searchIterator(option2, column, param);
+		if (option1 == "-p") {
+			for (auto it : its) {
+				resultSet.push_back(*it);
+			}
+			// TODO :: check over 5
 		}
-		return result;
-	};
-
-	virtual vector<EmployeeInfo*> searchByLastName(string name) override {
-		vector<EmployeeInfo*> result;
-		for (auto it = employee_.begin(); it != employee_.end(); ++it) {
-			if (it->name.last == name) result.push_back(&(*it));
-		}
-		return result;
-	};
+		return its.size();
+	}
 private:
-	vector<EmployeeInfo>& employee_;
+	IFinder* finder_;
 };
-

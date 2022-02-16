@@ -46,7 +46,8 @@ public:
 	string GetOption1();
 	string GetOption2();
 	virtual void GetEmployeeInfo(EmployeeInfo& e) = 0;
-	virtual void GetColumnData() = 0;
+	virtual void GetColumnData(string& columnName, string& columnValue) = 0;
+	virtual void GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) = 0;
 
 protected:
 	OP_CODE operationCode_;
@@ -58,7 +59,10 @@ class InstructionAdd : public Instruction {
 public:
 	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const EmployeeInfo& e);
 	virtual void GetEmployeeInfo(EmployeeInfo& e) override;
-	virtual void GetColumnData() override { throw exception(); }
+
+public:
+	virtual void GetColumnData(string& columnName, string& columnValue) override { throw exception(); }
+	virtual void GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) override { throw exception(); }
 
 private:
 	EmployeeInfo employee_;
@@ -66,8 +70,12 @@ private:
 
 class InstructionDel : public Instruction {
 public:
+	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue);
+	virtual void GetColumnData(string& columnName, string& columnValue) override;
+
+public:
 	virtual void GetEmployeeInfo(EmployeeInfo& e) override { throw exception(); }
-	virtual void GetColumnData() override {}
+	virtual void GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) override { throw exception(); }
 
 private:
 	string columnName_;
@@ -76,8 +84,12 @@ private:
 
 class InstructionSch : public Instruction {
 public:
+	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue) {}
+	virtual void GetColumnData(string& columnName, string& columnValue) override {}
+
+public:
 	virtual void GetEmployeeInfo(EmployeeInfo& e) override { throw exception(); }
-	virtual void GetColumnData() override {}
+	virtual void GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) override { throw exception(); }
 
 private:
 	string columnName_;
@@ -86,8 +98,12 @@ private:
 
 class InstructionMod : public Instruction {
 public:
+	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName1, const string cValue1, const string cName2, const string cValue2) {}
+	virtual void GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) override {}
+
+public:
 	virtual void GetEmployeeInfo(EmployeeInfo& e) override { throw exception(); }
-	virtual void GetColumnData() override {}
+	virtual void GetColumnData(string& columnName, string& columnValue) override { throw exception(); }
 
 private:
 	string columnName1st_;
@@ -96,16 +112,11 @@ private:
 	string columnValue2nd_;
 };
 
-
-struct Input {
-	virtual bool Open(string path) = 0;
-	virtual bool ReadLine(Instruction** ins) = 0; // 한 줄씩 명령 라인을 읽어서 ins에 내용을 채워준다. 성공 시 true 리턴, EOF 도달 시 false 리턴.
-};
-
-class InputFromFile : public Input {
+class InputFromFile {
 public:
-	virtual bool Open(string path) override;
-	virtual bool ReadLine(Instruction** ins) override;
+	bool Open(string path);
+	bool Close();
+	bool ReadLine(Instruction** ins); // 한 줄씩 명령 라인을 읽어서 ins에 내용을 채워준다. 성공 시 true 리턴, EOF 도달 시 false 리턴.
 
 private:
 	OP_CODE ConvertStrToOpCode(const string& opCode);

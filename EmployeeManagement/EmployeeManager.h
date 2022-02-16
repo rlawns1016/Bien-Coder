@@ -25,7 +25,6 @@ public:
 		Instruction* ins = nullptr;
 		InputFromFile* input = new InputFromFile();
 		bool resultOpen = input->Open(inputFIleName);
-		bool resultReadLine = input->ReadLine(&ins);
 		
 		//output
 
@@ -34,11 +33,12 @@ public:
 		vector<EmployeeInfo> result;
 
 		if (!resultOpen)	ret = ERROR_CODE_CANNOT_OPEN_FILE;
-		else if (!resultReadLine)	ret = ERROR_CODE_CANNOT_READ_LINE;
 		else
 		{
-			switch (ins->GetOperationCode())
+			while (input->ReadLine(&ins))
 			{
+				switch (ins->GetOperationCode())
+				{
 				case OP_CODE::ADD:
 				{
 					IADD* add = new ADD(db);
@@ -75,8 +75,8 @@ public:
 				default:
 					ret = ERROR_CODE_INVALID_INSTRUCTION;
 					break;
+				}
 			}
-
 		}
 
 		return ret;

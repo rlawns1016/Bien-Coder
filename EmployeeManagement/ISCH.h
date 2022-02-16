@@ -1,5 +1,5 @@
 #pragma once
-#include "IFinder.h"
+#include "IDataBase.h"
 
 struct ISCH {
 	virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet) = 0;
@@ -7,21 +7,23 @@ struct ISCH {
 
 class SCH : public ISCH {
 public:
-	SCH(IFinder* finder) : finder_(finder) {
+	SCH(IDataBase* db) : db_(db) {
 	}
 
 	virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet) override {
 		resultSet.clear();
-		vector <list<EmployeeInfo>::iterator> its;
-		its = finder_->searchIterator(option2, column, param);
-		if (option1 == "-p") {
-			for (auto it : its) {
-				resultSet.push_back(*it);
+		vector<unsigned int> pks;
+		int result = 0;
+		pks = db_->search(option2, column, param);
+		for (auto aKey : pks) {
+			if (option1 == "-p") {
+				resultSet.push_back(*db_->getEmployeeInfo(aKey));
 			}
-			// TODO :: check over 5
+			result++;
 		}
-		return its.size();
+		return result;
+
 	}
 private:
-	IFinder* finder_;
+	IDataBase* db_;
 };

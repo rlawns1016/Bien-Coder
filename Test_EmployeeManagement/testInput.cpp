@@ -34,7 +34,23 @@ TEST(InputTest, InputFromFileClassTest) {
 	bool resultReadLine = input->ReadLine(&outputIns);
 	ASSERT_EQ(true, resultOpen);
 	ASSERT_EQ(true, resultReadLine);
+	ASSERT_NE(nullptr, outputIns);
 	EXPECT_EQ(OP_CODE::ADD, outputIns->GetOperationCode());
-	EXPECT_EQ("", outputIns->GetOption1());
-	EXPECT_EQ("", outputIns->GetOption2());
+	EXPECT_EQ(" ", outputIns->GetOption1());
+	EXPECT_EQ(" ", outputIns->GetOption2());
+
+	EmployeeInfo e;
+	outputIns->GetEmployeeInfo(e);
+	EXPECT_EQ(2015123099, e.employeeNum);
+	EXPECT_EQ("VXIHXOTH", e.name.first);
+	EXPECT_EQ("JHOP", e.name.last);
+	EXPECT_EQ(CL::CL3, e.cl);
+	EXPECT_EQ(3112, e.phoneNum.mid);
+	EXPECT_EQ(2609, e.phoneNum.end);
+	EXPECT_EQ(1977, e.birthday.y);
+	EXPECT_EQ(12, e.birthday.m);
+	EXPECT_EQ(11, e.birthday.d);
+	EXPECT_EQ(CERTI::ADV, e.certi);
+
+	delete input;
 }

@@ -5,10 +5,12 @@
 #include <unordered_map>
 
 struct IDataBase {
-	virtual vector<unsigned int> searchPK(string option, string column, string param) = 0;
+	virtual vector<unsigned int> search(string option, string column, string param) = 0;
 	virtual bool modify(unsigned int employeeNum, EmployeeInfo newInfo) = 0;
 	virtual bool erase(unsigned int employeeNum) = 0;
 	virtual bool add(EmployeeInfo info) = 0;
+	virtual EmployeeInfo* getEmployeeInfo(unsigned int employeeNum) = 0;
+	virtual unsigned int getEmployeeCount() = 0;
 };
 
 class DataBase : public IDataBase {
@@ -16,23 +18,23 @@ public:
 	DataBase() {
 	}
 
-	virtual bool erase(unsigned int pk) override {
-		return employee_.erase(pk);
+	virtual bool erase(unsigned int employeeNum) override {
+		return employee_.erase(employeeNum);
 	}
 
 	virtual bool add(EmployeeInfo info) override {
-		unsigned int pk = info.employeeNum;
-		return employee_.insert({ pk, info }).second;
+		unsigned int employeeNum = info.employeeNum;
+		return employee_.insert({ employeeNum, info }).second;
 	}
 
-	virtual bool modify(unsigned int pk, EmployeeInfo newInfo) override {
-		if(employee_.find(pk) == employee_.end()) return false;
-		employee_[pk] = newInfo;
+	virtual bool modify(unsigned int employeeNum, EmployeeInfo newInfo) override {
+		if(employee_.find(employeeNum) == employee_.end()) return false;
+		employee_[employeeNum] = newInfo;
 		return true;
 	}
 
 
-	virtual vector<unsigned int> searchPK(string option, string column, string param) override {
+	virtual vector<unsigned int> search(string option, string column, string param) override {
 		vector<unsigned int> result;
 		for (auto it = employee_.begin(); it != employee_.end(); ++it) {
 			if (compare(option, column, param, it->second)) {
@@ -40,6 +42,15 @@ public:
 			}
 		}
 		return result;
+	}
+
+	virtual EmployeeInfo* getEmployeeInfo(unsigned int employeeNum) {
+		if (employee_.find(employeeNum) == employee_.end()) return nullptr;
+		return &employee_[employeeNum];
+	}
+
+	virtual unsigned int getEmployeeCount() {
+		return employee_.size();
 	}
 
 private:
@@ -117,7 +128,7 @@ private:
 	}
 
 	bool compare(string option, string column, string param, EmployeeInfo target) {
-		if (column == "emplyeeNum") {
+		if (column == "employeeNum") {
 			return getFullYearEmployeeNum(param) == target.employeeNum;
 		}
 		else if (column == "name") {

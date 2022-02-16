@@ -100,7 +100,7 @@ private:
 	}
 
 	bool compare(string option, string column, string param, EmployeeInfo* target) {
-		if (column == "emplyeeNum") {
+		if (column == "employeeNum") {
 			return getFullYearEmployeeNum(param) == target->employeeNum;
 		}
 		else if (column == "name") {

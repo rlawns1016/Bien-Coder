@@ -129,10 +129,12 @@ bool InputFromFile::CreateInstructionAdd(Instruction** ins, const OP_CODE opCode
 	size_t payloadLength = payload.length();
 	size_t payloadPos;
 
-	//사번 앞에 "19" 붙여서 사번 정렬 용이하게 구성
+	//사번 앞 연도 2자리를 4자리로 확장하여, 사번 정렬 용이하게 구성
 	payloadPos = payloadSubStr.find(',');
-	string employeeNum = "19" + payloadSubStr.substr(0, payloadPos);
+	string employeeNum = payloadSubStr.substr(0, payloadPos);
 	e.employeeNum = atoi(employeeNum.c_str());
+	if (e.employeeNum >= 69000000) e.employeeNum += 1900000000;
+	else e.employeeNum += 2000000000;
 	payloadSubStr = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
 
 	payloadPos = payloadSubStr.find(' ');

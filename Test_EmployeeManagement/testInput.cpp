@@ -26,3 +26,15 @@ TEST(InputTest, InstructionAddClassTest) {
 	delete ins;
 }
 
+TEST(InputTest, InputFromFileClassTest) {
+	string inputPath = "./input_20_20.txt";
+	Instruction outputIns;
+	InputFromFile* input = new InputFromFile();
+	bool resultOpen = input->Open(inputPath);
+	bool resultReadLine = input->ReadLine(outputIns);
+	ASSERT_EQ(true, resultOpen);
+	ASSERT_EQ(true, resultReadLine);
+	EXPECT_EQ(OP_CODE::ADD, outputIns.GetOperationCode());
+	EXPECT_EQ("", outputIns.GetOption1());
+	EXPECT_EQ("", outputIns.GetOption2());
+}

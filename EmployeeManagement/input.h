@@ -43,18 +43,18 @@ enum class COLUMN_NAME {
 class Instruction {
 public:
 	OP_CODE GetOperationCode();
-	OPTION_1 GetPrintOption();
-	OPTION_2 GetCondition();
+	string GetOption1();
+	string GetOption2();
 
 protected:
 	OP_CODE operationCode_;
-	OPTION_1 print_;
-	OPTION_2 condition_;
+	string option1_;
+	string option2_;
 };
 
 class InstructionAdd : public Instruction {
 public:
-	void SetInstruction(const OP_CODE op, const OPTION_1 opt1, const OPTION_2 opt2, const EmployeeInfo& e);
+	void SetInstruction(const OP_CODE op, const string opt1, const string opt2, const EmployeeInfo& e);
 	void GetEmployeeInfo(EmployeeInfo& e);
 
 private:
@@ -64,23 +64,23 @@ private:
 class InstructionDel : public Instruction {
 
 private:
-	COLUMN_NAME columnName_;
+	string columnName_;
 	string columnValue_;
 };
 
 class InstructionSch : public Instruction {
 
 private:
-	COLUMN_NAME columnName_;
+	string columnName_;
 	string columnValue_;
 };
 
 class InstructionMod : public Instruction {
 
 private:
-	COLUMN_NAME columnName1st_;
+	string columnName1st_;
 	string columnValue1st_;
-	COLUMN_NAME columnName2nd_;
+	string columnName2nd_;
 	string columnValue2nd_;
 };
 

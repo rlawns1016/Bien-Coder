@@ -4,16 +4,16 @@
 
 TEST(InputTest, InstructionAddClassTest) {
 	OP_CODE inputOp = OP_CODE::ADD;
-	OPTION_1 inputOption1 = OPTION_1::PRINT_EMPTY;
-	OPTION_2 inputOption2 = OPTION_2::CONDITION_EMPTY;
+	string inputOption1 = " ";
+	string inputOption2 = " ";
 	EmployeeInfo inputEmployee = { 2000123456,{ "GILDONG", "KIM" },CL::CL1,{ 1234,5678 },{ 1990,1,1 },CERTI::ADV };
 	InstructionAdd* ins = new InstructionAdd();
 	ins->SetInstruction(inputOp, inputOption1, inputOption2, inputEmployee);
 	EmployeeInfo outputEmployee;
 	ins->GetEmployeeInfo(outputEmployee);
 	EXPECT_EQ(inputOp, ins->GetOperationCode());
-	EXPECT_EQ(inputOption1, ins->GetPrintOption());
-	EXPECT_EQ(inputOption2, ins->GetCondition());
+	EXPECT_EQ(inputOption1, ins->GetOption1());
+	EXPECT_EQ(inputOption2, ins->GetOption2());
 	EXPECT_EQ(inputEmployee.employeeNum, outputEmployee.employeeNum);
 	EXPECT_EQ(inputEmployee.name.first, outputEmployee.name.first);
 	EXPECT_EQ(inputEmployee.cl, outputEmployee.cl);

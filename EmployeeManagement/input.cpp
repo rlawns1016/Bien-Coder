@@ -82,23 +82,23 @@ bool InputFromFile::ReadLine(Instruction** ins) {
 	len = readStr.length();
 
 	//TODO : invalid input check
-	
+
 	pos = readStr.find(',');
 	opCode = ConvertStrToOpCode(readStr.substr(0, pos));
-	readStr = readStr.substr(pos + 2, len - pos - 2);
+	readStr = readStr.substr(pos + 1, len - pos - 1);
 	
 	pos = readStr.find(',');
 	option1 = readStr.substr(0, pos);
-	readStr = readStr.substr(pos + 2, len - pos - 2);
-
+	readStr = readStr.substr(pos + 1, len - pos - 1);
+	
 	pos = readStr.find(',');
 	option2 = readStr.substr(0, pos);
-	readStr = readStr.substr(pos + 2, len - pos - 2);
-
+	readStr = readStr.substr(pos + 1, len - pos - 1);
+	
 	pos = readStr.find(',');
 	option3 = readStr.substr(0, pos);
-	payload = readStr.substr(pos + 2, len - pos - 2);
-
+	payload = readStr.substr(pos + 1, len - pos - 1);
+	
 	switch (opCode) {
 	case OP_CODE::ADD : 
 		result = CreateInstructionAdd(ins, opCode, option1, option2, payload);
@@ -135,43 +135,42 @@ bool InputFromFile::CreateInstructionAdd(Instruction** ins, const OP_CODE opCode
 	e.employeeNum = atoi(employeeNum.c_str());
 	if (e.employeeNum >= 69000000) e.employeeNum += 1900000000;
 	else e.employeeNum += 2000000000;
-	payloadSubStr = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
 
 	payloadPos = payloadSubStr.find(' ');
-	string firstName = payloadSubStr.substr(0, payloadPos);
-	e.name.first = atoi(firstName.c_str());
-	payloadSubStr = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
+	e.name.first = payloadSubStr.substr(0, payloadPos);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
 
 	payloadPos = payloadSubStr.find(',');
-	string lastName = payloadSubStr.substr(0, payloadPos);
-	e.name.last = atoi(lastName.c_str());
-	payloadSubStr = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
+	e.name.last = payloadSubStr.substr(0, payloadPos);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
 
 	payloadPos = payloadSubStr.find(',');
 	string cl = payloadSubStr.substr(0, payloadPos);
 	e.cl = ConvertStrToCl(cl);
-	payloadSubStr = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
 
 	// 전화번호 010- 은 skip
 	payloadPos = payloadSubStr.find('-');
-	payloadSubStr = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
 
 	payloadPos = payloadSubStr.find('-');
 	string midPhoneNum = payloadSubStr.substr(0, payloadPos);
 	e.phoneNum.mid = atoi(midPhoneNum.c_str());
-	payloadSubStr = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
 
 	payloadPos = payloadSubStr.find(',');
 	string endPhoneNum = payloadSubStr.substr(0, payloadPos);
 	e.phoneNum.end = atoi(endPhoneNum.c_str());
-	payloadSubStr = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
 
 	payloadPos = payloadSubStr.find(',');
 	string birthday = payloadSubStr.substr(0, payloadPos);
+	//cout << birthday << "@" << endl;
 	e.birthday.y = atoi(birthday.substr(0, 4).c_str());
 	e.birthday.m = atoi(birthday.substr(4, 2).c_str());
 	e.birthday.d = atoi(birthday.substr(6, 2).c_str());
-	string certi = payloadSubStr.substr(payloadPos + 2, payloadLength - payloadPos - 2);
+	string certi = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
 	e.certi = ConvertStrToCerti(certi);
 
 	insAdd.SetInstruction(opCode, option1, option2, e);

@@ -89,3 +89,14 @@ struct Input {
 	virtual bool Open(string path) = 0;
 	virtual bool ReadLine(Instruction* ins) = 0; // 한 줄씩 명령 라인을 읽어서 ins에 내용을 채워준다. 성공 시 true 리턴, EOF 도달 시 false 리턴.
 };
+
+class InputFromFile : public Input {
+public:
+	virtual bool Open(string path) override;
+	virtual bool ReadLine(Instruction* ins) override;
+private:
+	InstructionAdd insAdd;
+	InstructionDel insDel;
+	InstructionMod insMod;
+	InstructionSch insSch;
+};

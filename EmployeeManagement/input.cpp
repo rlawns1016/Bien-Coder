@@ -17,9 +17,16 @@ void InstructionAdd::SetInstruction(const OP_CODE op, const string opt1, const s
 	this->option1_ = opt1;
 	this->option2_ = opt2;
 	this->employee_ = e;
-	
 }
 
 void InstructionAdd::GetEmployeeInfo(EmployeeInfo& e) {
 	e = this->employee_;
+}
+
+bool InputFromFile::Open(string str) {
+	return false;
+}
+
+bool InputFromFile::ReadLine(Instruction* ins) {
+	return false;
 }

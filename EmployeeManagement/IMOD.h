@@ -1,55 +1,52 @@
 #pragma once
-#include <iostream>
+#include "IFinder.h"
 #include <vector>
-#include "mainFrame.h"
 
-using namespace std;
-
-
-struct SearchBaseCmd {
-
-	virtual vector<EmployeeInfo*> searchByFirstName(string name) = 0;
-	virtual vector<EmployeeInfo*> searchByLastName(string name) = 0;
+struct IMOD {
+	virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet) = 0;	
 };
 
-class ModifyCmd : public SearchBaseCmd {
+class MOD : public IMOD {
+
 public:
-	ModifyCmd(const EmployeeListParameter& param, DB& database);
-	~ModifyCmd();	
+	
+	MOD(IFinder* finder, list<EmployeeInfo>& employee) : finder_(finder), employee_(employee) {
+	}	
 
+	virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet) override {
+		resultSet.clear();
+		vector <list<EmployeeInfo>::iterator> its;
+		its = finder_->searchIterator(option2, column, param);
+		for (auto it : its) {
+			if (option1 == "-p") {
+				resultSet.push_back(*it);
+			}
+			employee_.erase(it);
+		}
+		// TODO :: check over 5
+		return its.size();
+	}
+	
 private:
-	vector<EmployeeInfo>& employee_;
-
-	string Search_ColumnName;
-	string Search_ColumValue;
-	string Mod_ColumnName;
-	string Mod_ColumnValue;
+	IFinder* finder_;
+	list<EmployeeInfo>& employee_;
 };
 
-#if 0 // temp
-ModifyCmd::ModifyCmd(const EmployeeListParameter& param, DB& database) : BaseCmd{ param, database) {
 
-	Search_ColumnName = param.GetArgs()[0];
-	Search_ColumValue = param.GetArgs()[1];
-	Mod_ColumnName = param.GetARgs()[2];
-	Mod_ColumnValue = param.GetArgs()[3];
-}
+struct IMOD_Exception {
+	virtual void ModEmployeeInfoException(const EmployeeInfo& info) = 0;
+};
 
-ModifyCmd::~ModifyCmd() {
+class MOD_Exception : public IMOD_Exception {
 
-}	
+public:
+	MOD_Exception(vector<EmployeeInfo>& employee) : employee_mod(employee) {}
 
-string ModifyCmd::Process() {
-
-	// need to DataBase Type : SearchColumnName & Opetion -p, -f/-l, -m/-l, -y/-m/-d
-	// need to MofidyColumName : none
-
-	string result = GetResult(employeeList); 
-	
-	for (auto employee : employeeList) {
-		delete employee;
+	virtual void ModEmployeeInfoException(const EmployeeInfo& info) override
+	{
+		employee_mod.push_back(info);
 	}
 
-	return result;
-}
-#endif
+private:
+	vector<EmployeeInfo>& employee_mod;
+};

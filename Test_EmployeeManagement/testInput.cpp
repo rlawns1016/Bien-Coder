@@ -98,3 +98,24 @@ TEST(InputTest, InputFromFileClassTest_MOD) {
 	input->Close();
 	delete input;
 }
+
+TEST(InputTest, InputFromFileClassTest_SCH) {
+	string inputPath = "./input_SCH.txt";
+	Instruction* outputIns = nullptr;
+	InputFromFile* input = new InputFromFile();
+	bool resultOpen = input->Open(inputPath);
+	bool resultReadLine = input->ReadLine(&outputIns);
+	ASSERT_EQ(true, resultOpen);
+	ASSERT_EQ(true, resultReadLine);
+	ASSERT_NE(nullptr, outputIns);
+	EXPECT_EQ(OP_CODE::SCH, outputIns->GetOperationCode());
+	EXPECT_EQ("-p", outputIns->GetOption1());
+	EXPECT_EQ("-m", outputIns->GetOption2());
+
+	string columnName, columnValue;
+	outputIns->GetColumnData(columnName, columnValue);
+	EXPECT_EQ("phoneNum", columnName);
+	EXPECT_EQ("3112", columnValue);
+	input->Close();
+	delete input;
+}

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "../EmployeeManagement/IDEL.h"
 
-TEST(DELCase, DELByName) {
+TEST(DELCase, ByName) {
 
 	IDataBase* db = new DataBase();
 	db->add({ 2000123456, {"KIM","GILDONG"},CL::CL1,{1,5678},{1990,1,1},CERTI::ADV });
@@ -31,8 +31,10 @@ TEST(DELCase, DELByName) {
 	EXPECT_EQ(resultCnt, 2);
 	EXPECT_EQ(db->getEmployeeCount(), 0);
 
+	db->add({ 2002123456, {"CHO","GILDONG"},CL::CL2,{3,5678},{1991,1,1},CERTI::PRO });
 
 	resultCnt = del->execute("-p", "-f", "name", "HONG", resultSet);
 	EXPECT_EQ(resultCnt, 0);
+	EXPECT_EQ(db->getEmployeeCount(), 1);
 
 }

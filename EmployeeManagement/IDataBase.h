@@ -6,6 +6,7 @@
 
 struct IDataBase {
 	virtual vector<unsigned int> search(string option, string column, string param) = 0;
+	virtual bool makeCopyFromParam(string option, string column, string param, EmployeeInfo& info) = 0;
 	virtual bool modify(unsigned int employeeNum, EmployeeInfo newInfo) = 0;
 	virtual bool erase(unsigned int employeeNum) = 0;
 	virtual bool add(EmployeeInfo info) = 0;
@@ -42,6 +43,11 @@ public:
 			}
 		}
 		return result;
+	}
+
+	virtual bool makeCopyFromParam(string option, string column, string param, EmployeeInfo& info) override {
+		assign(option, column, param, info);
+		return true; //TODO :: return
 	}
 
 	virtual EmployeeInfo* getEmployeeInfo(unsigned int employeeNum) {
@@ -111,19 +117,19 @@ private:
 	}
 	bool compareBirthDay(string option, string param, EmployeeInfo target) {
 		if (option == "-y") {
-			return target.birthday.y == stoi(param.substr(0, 2));
+			return target.birthday.y == stoi(param);
 		}
 		else if (option == "-m") {
-			return target.birthday.m == stoi(param.substr(2, 2));
+			return target.birthday.m == stoi(param);
 		}
 		else if (option == "-d") {
-			return target.birthday.d == stoi(param.substr(4, 2));
+			return target.birthday.d == stoi(param);
 		}
 		else { //TODO :: check invalid option ?
 			//TODO :: check valid param ? -> is exist space..
-			return (target.birthday.y == stoi(param.substr(0, 2))
-				&& target.birthday.m == stoi(param.substr(2, 2))
-				&& target.birthday.d == stoi(param.substr(4, 2)));
+			return (target.birthday.y == stoi(param.substr(0, 4))
+				&& target.birthday.m == stoi(param.substr(4, 2))
+				&& target.birthday.d == stoi(param.substr(6, 2)));
 		}
 	}
 
@@ -147,6 +153,70 @@ private:
 			return getCerti(param) == target.certi;
 		}
 		return false;
+	}
+
+	void assignName(string option, string param, EmployeeInfo& target) {
+		if (option == "-f") {
+			target.name.first = param;
+		}
+		else if (option == "-l") {
+			target.name.last = param;
+		}
+		else { //TODO :: check invalid option ?
+			//TODO :: check valid param ? -> is exist space..
+			target.name.first = split(param, ' ')[0];
+			target.name.last = split(param, ' ')[1];
+		}
+	}
+	void assignPhoneNum(string option, string param, EmployeeInfo& target) {
+		if (option == "-m") {
+			target.phoneNum.mid = stoi(param);
+		}
+		else if (option == "-l") {
+			target.phoneNum.end = stoi(param);
+		}
+		else { //TODO :: check invalid option ?
+			//TODO :: check valid param ? -> is exist space..
+			target.phoneNum.mid = stoi(split(param, '-')[1]);
+			target.phoneNum.end = stoi(split(param, '-')[2]);
+		}
+	}
+	void assignBirthDay(string option, string param, EmployeeInfo& target) {
+		if (option == "-y") {
+			target.birthday.y = stoi(param);
+		}
+		else if (option == "-m") {
+			target.birthday.m = stoi(param);
+		}
+		else if (option == "-d") {
+			target.birthday.d = stoi(param);
+		}
+		else { //TODO :: check invalid option ?
+			//TODO :: check valid param ? -> is exist space..
+			target.birthday.y = stoi(param.substr(0, 4));
+			target.birthday.m = stoi(param.substr(4, 2));
+			target.birthday.d = stoi(param.substr(6, 2));
+		}
+	}
+	void assign(string option, string column, string param, EmployeeInfo& target) {
+		if (column == "employeeNum") {
+			target.employeeNum = getFullYearEmployeeNum(param);
+		}
+		else if (column == "name") {
+			assignName(option, param, target);
+		}
+		else if (column == "cl") {
+			target.cl = getCL(param);
+		}
+		else if (column == "phoneNum") {
+			assignPhoneNum(option, param, target);
+		}
+		else if (column == "birthday") {
+			assignBirthDay(option, param, target);
+		}
+		else if (column == "certi") {
+			target.certi = getCerti(param);
+		}
 	}
 
 	unordered_map<unsigned int, EmployeeInfo> employee_;

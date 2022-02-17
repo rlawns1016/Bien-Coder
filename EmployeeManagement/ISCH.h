@@ -14,13 +14,15 @@ public:
 		resultSet.clear();
 		vector<unsigned int> pks;
 		int result = 0;
+		EmployeeResultSet rsltSet;
 		pks = db_->search(option2, column, param);
 		for (auto aKey : pks) {
 			if (option1 == "-p") {
-				resultSet.push_back(*db_->getEmployeeInfo(aKey));
+				rsltSet.insert(*db_->getEmployeeInfo(aKey));
 			}
 			result++;
 		}
+		rsltSet.toVector(resultSet);
 		return result;
 
 	}

@@ -26,7 +26,7 @@ TEST(InputTest, InstructionAddClassTest) {
 	delete ins;
 }
 
-TEST(InputTest, InputFromFileClassTest) {
+TEST(InputTest, InputFromFileClassTest_ADD) {
 	string inputPath = "./input_20_20.txt";
 	Instruction* outputIns = nullptr;
 	InputFromFile* input = new InputFromFile();
@@ -51,6 +51,71 @@ TEST(InputTest, InputFromFileClassTest) {
 	EXPECT_EQ(12, e.birthday.m);
 	EXPECT_EQ(11, e.birthday.d);
 	EXPECT_EQ(CERTI::ADV, e.certi);
+	input->Close();
+	delete input;
+}
 
+TEST(InputTest, InputFromFileClassTest_DEL) {
+	string inputPath = "./input_DEL.txt";
+	Instruction* outputIns = nullptr;
+	InputFromFile* input = new InputFromFile();
+	bool resultOpen = input->Open(inputPath);
+	bool resultReadLine = input->ReadLine(&outputIns);
+	ASSERT_EQ(true, resultOpen);
+	ASSERT_EQ(true, resultReadLine);
+	ASSERT_NE(nullptr, outputIns);
+	EXPECT_EQ(OP_CODE::DEL, outputIns->GetOperationCode());
+	EXPECT_EQ("-p", outputIns->GetOption1());
+	EXPECT_EQ("-l", outputIns->GetOption2());
+
+	string columnName, columnValue;
+	outputIns->GetColumnData(columnName, columnValue);
+	EXPECT_EQ("name", columnName);
+	EXPECT_EQ("MPOSXU", columnValue);
+	input->Close();
+	delete input;
+}
+
+TEST(InputTest, InputFromFileClassTest_MOD) {
+	string inputPath = "./input_MOD.txt";
+	Instruction* outputIns = nullptr;
+	InputFromFile* input = new InputFromFile();
+	bool resultOpen = input->Open(inputPath);
+	bool resultReadLine = input->ReadLine(&outputIns);
+	ASSERT_EQ(true, resultOpen);
+	ASSERT_EQ(true, resultReadLine);
+	ASSERT_NE(nullptr, outputIns);
+	EXPECT_EQ(OP_CODE::MOD, outputIns->GetOperationCode());
+	EXPECT_EQ("-p", outputIns->GetOption1());
+	EXPECT_EQ(" ", outputIns->GetOption2());
+
+	string columnName1st, columnValue1st, columnName2nd, columnValue2nd;
+	outputIns->GetColumnData(columnName1st, columnValue1st, columnName2nd, columnValue2nd);
+	EXPECT_EQ("name", columnName1st);
+	EXPECT_EQ("FB NTAWR", columnValue1st);
+	EXPECT_EQ("birthday", columnName2nd);
+	EXPECT_EQ("20050520", columnValue2nd);
+	input->Close();
+	delete input;
+}
+
+TEST(InputTest, InputFromFileClassTest_SCH) {
+	string inputPath = "./input_SCH.txt";
+	Instruction* outputIns = nullptr;
+	InputFromFile* input = new InputFromFile();
+	bool resultOpen = input->Open(inputPath);
+	bool resultReadLine = input->ReadLine(&outputIns);
+	ASSERT_EQ(true, resultOpen);
+	ASSERT_EQ(true, resultReadLine);
+	ASSERT_NE(nullptr, outputIns);
+	EXPECT_EQ(OP_CODE::SCH, outputIns->GetOperationCode());
+	EXPECT_EQ("-p", outputIns->GetOption1());
+	EXPECT_EQ("-m", outputIns->GetOption2());
+
+	string columnName, columnValue;
+	outputIns->GetColumnData(columnName, columnValue);
+	EXPECT_EQ("phoneNum", columnName);
+	EXPECT_EQ("3112", columnValue);
+	input->Close();
 	delete input;
 }

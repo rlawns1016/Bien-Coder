@@ -23,12 +23,64 @@ void InstructionAdd::GetEmployeeInfo(EmployeeInfo& e) {
 	e = this->employee_;
 }
 
-bool InputFromFile::Open(string str) {
-	fileStream.open(str);
+void InstructionDel::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue) {
+	this->operationCode_ = op;
+	this->option1_ = opt1;
+	this->option2_ = opt2;
+	this->columnName_ = cName;
+	this->columnValue_ = cValue;
+}
+
+void InstructionDel::GetColumnData(string& columnName, string& columnValue) {
+	columnName = this->columnName_;
+	columnValue = this->columnValue_;
+}
+
+void InstructionMod::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName1, const string cValue1, const string cName2, const string cValue2) {
+	this->operationCode_ = op;
+	this->option1_ = opt1;
+	this->option2_ = opt2;
+	this->columnName1st_ = cName1;
+	this->columnValue1st_ = cValue1;
+	this->columnName2nd_ = cName2;
+	this->columnValue2nd_ = cValue2;
+}
+
+void InstructionMod::GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) {
+	columnName1st = this->columnName1st_;
+	columnValue1st = this->columnValue1st_;
+	columnName2nd = this->columnName2nd_;
+	columnValue2nd = this->columnValue2nd_;
+}
+
+void InstructionSch::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue) {
+	this->operationCode_ = op;
+	this->option1_ = opt1;
+	this->option2_ = opt2;
+	this->columnName_ = cName;
+	this->columnValue_ = cValue;
+}
+
+void InstructionSch::GetColumnData(string& columnName, string& columnValue) {
+	columnName = this->columnName_;
+	columnValue = this->columnValue_;
+}
+
+
+bool InputFromFile::Open(string path) {
+	fileStream.open(path);
 
 	if (false == fileStream.is_open())
 		return false;
 
+	return true;
+}
+
+bool InputFromFile::Close() {
+	if (false == fileStream.is_open())
+		return false;
+
+	fileStream.close();
 	return true;
 }
 
@@ -166,7 +218,7 @@ bool InputFromFile::CreateInstructionAdd(Instruction** ins, const OP_CODE opCode
 
 	payloadPos = payloadSubStr.find(',');
 	string birthday = payloadSubStr.substr(0, payloadPos);
-	//cout << birthday << "@" << endl;
+
 	e.birthday.y = atoi(birthday.substr(0, 4).c_str());
 	e.birthday.m = atoi(birthday.substr(4, 2).c_str());
 	e.birthday.d = atoi(birthday.substr(6, 2).c_str());
@@ -177,20 +229,61 @@ bool InputFromFile::CreateInstructionAdd(Instruction** ins, const OP_CODE opCode
 
 	*ins = &insAdd;
 
-	return true;;
+	return true;
 }
 
 bool InputFromFile::CreateInstructionDel(Instruction** ins, const OP_CODE opCode, const string& option1, const string& option2, const string& payload) {
+	string payloadSubStr = payload;
+	size_t payloadLength = payload.length();
+	size_t payloadPos;
 
-	return false;
+	payloadPos = payloadSubStr.find(',');
+	string columnName = payloadSubStr.substr(0, payloadPos);
+	string columnValue = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
+
+	insDel.SetInstruction(opCode, option1, option2, columnName, columnValue);
+
+	*ins = &insDel;
+
+	return true;
 }
 
 bool InputFromFile::CreateInstructionMod(Instruction** ins, const OP_CODE opCode, const string& option1, const string& option2, const string& payload) {
+	string payloadSubStr = payload;
+	size_t payloadLength = payload.length();
+	size_t payloadPos;
 
-	return false;
+	payloadPos = payloadSubStr.find(',');
+	string columnName1st = payloadSubStr.substr(0, payloadPos);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
+
+	payloadPos = payloadSubStr.find(',');
+	string columnValue1st = payloadSubStr.substr(0, payloadPos);
+	payloadSubStr = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
+
+	payloadPos = payloadSubStr.find(',');
+	string columnName2nd = payloadSubStr.substr(0, payloadPos);
+	string columnValue2nd = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
+
+
+	insMod.SetInstruction(opCode, option1, option2, columnName1st, columnValue1st, columnName2nd, columnValue2nd);
+
+	*ins = &insMod;
+	return true;
 }
 
 bool InputFromFile::CreateInstructionSch(Instruction** ins, const OP_CODE opCode, const string& option1, const string& option2, const string& payload) {
+	string payloadSubStr = payload;
+	size_t payloadLength = payload.length();
+	size_t payloadPos;
 
-	return false;
+	payloadPos = payloadSubStr.find(',');
+	string columnName = payloadSubStr.substr(0, payloadPos);
+	string columnValue = payloadSubStr.substr(payloadPos + 1, payloadLength - payloadPos - 1);
+
+	insSch.SetInstruction(opCode, option1, option2, columnName, columnValue);
+
+	*ins = &insSch;
+
+	return true;
 }

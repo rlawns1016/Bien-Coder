@@ -14,12 +14,15 @@ TEST(MODCase, ByName) {
 	IMOD* mod = new MOD(db);	
 	ISCH* sch = new SCH(db);
 	vector<EmployeeInfo> resultSet;
-	int resultCnt;
-	
-	
-	EmployeeInfo newInfo = { 2001123456, {"KIM","GOLDONG"},CL::CL1,{2,5678},{1990,1,1},CERTI::ADV };	
+	int resultCnt;	
 
-	resultCnt = mod->execute("-p", "-l", "name", "GILDONG1", "certi", "EX", resultSet, newInfo);
-	EXPECT_EQ(newInfo.name.first, "KIM");
-	EXPECT_EQ(newInfo.certi, EX);	
+	// 1. certi ¼öÁ¤
+	EXPECT_EQ(db->getEmployeeInfo(2000123456)->certi, PRO);
+	resultCnt = mod->execute("-p", "-l", "name", "GILDONG1", "certi", "EX", resultSet);	
+	EXPECT_EQ(db->getEmployeeInfo(2000123456)->certi, EX);
+
+	EXPECT_EQ(db->getEmployeeInfo(2003123456)->cl, CL1);
+	resultCnt = mod->execute("-p", "-l", "name", "GOLDONG4", "cl", "CL3", resultSet);
+	EXPECT_EQ(db->getEmployeeInfo(2003123456)->cl, CL3);
+
 }

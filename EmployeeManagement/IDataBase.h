@@ -242,6 +242,12 @@ private:
 		}
 	}
 
+	struct compare {
+		bool operator()(const EmployeeInfo& e1, const EmployeeInfo& e2) {
+			return e1.employeeNum > e2.employeeNum;
+		}
+	};
+
 	unordered_map<unsigned int, EmployeeInfo> employee_;
 };
 

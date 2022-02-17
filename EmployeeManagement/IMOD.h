@@ -21,11 +21,11 @@ public:
 		pks = db_->search(option2, column, param);
 		for (auto aKey : pks) {
 			if (option1 == "-p") {
-				if (column != "employeeNum") {
+				if (new_column != "employeeNum") {
 					resultSet.push_back(*db_->getEmployeeInfo(aKey));
 				}
 			}
-			if (column != "employeeNum") {
+			if (new_column != "employeeNum") {
 #if 0
 				db_->makeCopyFromParam(option2, new_column, new_param, *db_->getEmployeeInfo(aKey));
 				result += (int)db_->modify(aKey, *db_->getEmployeeInfo(aKey));

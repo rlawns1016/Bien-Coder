@@ -16,5 +16,5 @@ private:
 	string ConvertPhoneNumberToStr(const int mid, const int end);
 	string ConvertBirthdayToStr(const int year, const int month, const int day);
 	string ConvertCertiToStr(const CERTI certi);
-	ifstream fileStream;
+	ofstream fileStream;
 };

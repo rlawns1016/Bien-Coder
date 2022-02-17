@@ -42,6 +42,7 @@ public:
 	virtual void GetColumnData(string& columnName1st, string& columnValue1st, string& columnName2nd, string& columnValue2nd) = 0;
 
 protected:
+	void SetInstruction(const OP_CODE op, const string opt1, const string opt2);
 	OP_CODE operationCode_;
 	string option1_;
 	string option2_;

@@ -66,3 +66,16 @@ TEST(DBCase, makeCopy) {
 	EXPECT_EQ(info.name.first, "HONG");
 	EXPECT_EQ(info.name.last, "KILDONG");
 }
+
+TEST(DBCase, Exception) {
+	try {
+		IDataBase* db = new DataBase();
+		db->add({ 2000123456, {"KIM","GILDONG"},CL::CL1,{1,5678},{1990,1,1},CERTI::ADV });
+		db->add({ 2001123456, {"KIM","GOLDONG"},CL::CL1,{2,5678},{1990,1,1},CERTI::ADV });
+		db->search("", "nname", "CHOIGILDONG");
+	}
+	catch (const exception& e) {
+		cout << e.what() << endl;
+	}
+
+}

@@ -4,6 +4,7 @@
 #include "mainFrame.h"
 #include <unordered_map>
 #include <sstream>
+#include "EmployeeResultSet.h"
 
 struct IDataBase {
 	virtual vector<unsigned int> search(string option, string column, string param) = 0;
@@ -34,12 +35,6 @@ public:
 		employee_[employeeNum] = newInfo;
 		return true;
 	}
-
-	struct compare {
-		bool operator()(const EmployeeInfo& e1, const EmployeeInfo& e2) {
-			return e1.employeeNum > e2.employeeNum;
-		}
-	};
 
 	virtual vector<unsigned int> search(string option, string column, string param) override {
 		vector<unsigned int> result;
@@ -177,8 +172,8 @@ private:
 		if (vstr.size() < 1) 
 			throw std::invalid_argument("invalid param. name is 2 words");
 
-		target.name.first = split(param, ' ')[0];
-		target.name.last = split(param, ' ')[1];
+		target.name.first = vstr[0];
+		target.name.last = vstr[1];
 	}
 	void assignPhoneNum(string param, EmployeeInfo& target) {
 		vector<string> vstr = split(param, '-');
@@ -219,7 +214,6 @@ private:
 			throw std::invalid_argument("invalid column. Column cosist name, cl, phoneNum, birthday, certi");
 		}
 	}
-
 
 	unordered_map<unsigned int, EmployeeInfo> employee_;
 };

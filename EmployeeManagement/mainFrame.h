@@ -41,3 +41,11 @@ typedef struct
 	Birthday birthday;
 	CERTI certi;
 }EmployeeInfo;
+
+enum class OP_CODE {
+	ADD,
+	DEL,
+	SCH,
+	MOD,
+	UNKNOWN
+};

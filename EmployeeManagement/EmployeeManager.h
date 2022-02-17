@@ -52,22 +52,26 @@ public:
 				{
 					IDEL* del = new DEL(db);
 					InstructionDel* delIns = (InstructionDel*)ins;
+					//execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet)
 					//del->execute(~);
 					//save result to outputFile
 					break;
 				}
 				case OP_CODE::SCH:
 				{
-					//ISCH* sch = new SCH(db);
+					ISCH* sch = new SCH(db);
 					InstructionSch* schIns = (InstructionSch*)ins;
+					//execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet)
 					//sch->execute(~);
 					//save result to outputFile
 					break;
 				}
 				case OP_CODE::MOD:
 				{
-					//IMOD* mod = new MOD(db);
+					IMOD* mod = new MOD(db);
 					InstructionMod* modIns = (InstructionMod*)ins;
+					EmployeeInfo info;
+					//execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet, const EmployeeInfo& info)
 					//mod->execute(~);
 					//save result to outputFile
 					break;

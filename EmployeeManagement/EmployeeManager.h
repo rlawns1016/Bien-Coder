@@ -52,8 +52,8 @@ public:
 				{
 					IDEL* del = new DEL(db);
 					InstructionDel* delIns = (InstructionDel*)ins;
-					//execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet)
-					//del->execute(~);
+					//virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet)
+					//del->execute(delIns->GetOption1(), delIns->GetOption2(), "", string param, vector<EmployeeInfo>& resultSet)
 					//save result to outputFile
 					break;
 				}

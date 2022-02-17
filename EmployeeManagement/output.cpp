@@ -49,10 +49,12 @@ bool OutputToFile::WriteLine(OP_CODE opCode, vector<EmployeeInfo>& resultSet) {
 	}
 
 	sort(resultSet.begin(), resultSet.end(), compare);
-
+	int cnt = 0;
 	for (auto value : resultSet) {
+		if (cnt >= 5) break;
+		cnt++;
 		string eNum = ConvertEmployeeNumToStr(value.employeeNum);
-		string name = value.name.last + " " + value.name.first;
+		string name = value.name.first + " " + value.name.last;
 		string cl = ConvertCltoStr(value.cl);
 		string phoneNum = ConvertPhoneNumberToStr(value.phoneNum.mid, value.phoneNum.end);
 		string birthday = ConvertBirthdayToStr(value.birthday.y, value.birthday.m, value.birthday.d);

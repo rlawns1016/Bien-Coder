@@ -44,16 +44,16 @@ TEST(OutputTest, OutputToFileClassTest) {
 	getline(resultCheckStream, resultString);
 	EXPECT_EQ("SCH,NONE", resultString);
 	getline(resultCheckStream, resultString);
-	EXPECT_EQ("SCH,00000001,KIM GILDONG,CL1,010-1234-5678,19900101,ADV", resultString);
+	EXPECT_EQ("SCH,00000001,GILDONG KIM,CL1,010-1234-5678,19900101,ADV", resultString);
 	getline(resultCheckStream, resultString);
-	EXPECT_EQ("SCH,00000001,LEE GILDONG1,CL1,010-1234-5678,19900101,ADV", resultString);
+	EXPECT_EQ("SCH,00000001,GILDONG1 LEE,CL1,010-1234-5678,19900101,ADV", resultString);
 	getline(resultCheckStream, resultString);
-	EXPECT_EQ("SCH,00000002,LEE GILDONG2,CL1,010-1234-5678,19900101,ADV", resultString);
+	EXPECT_EQ("SCH,00000002,GILDONG2 LEE,CL1,010-1234-5678,19900101,ADV", resultString);
 	getline(resultCheckStream, resultString);
-	EXPECT_EQ("SCH,00000003,LEE GILDONG3,CL1,010-1234-5678,19900101,ADV", resultString);
+	EXPECT_EQ("SCH,00000003,GILDONG3 LEE,CL1,010-1234-5678,19900101,ADV", resultString);
 	getline(resultCheckStream, resultString);
-	EXPECT_EQ("SCH,00000004,LEE GILDONG4,CL1,010-1234-5678,19900101,ADV", resultString);
+	EXPECT_EQ("SCH,00000004,GILDONG4 LEE,CL1,010-1234-5678,19900101,ADV", resultString);
 	getline(resultCheckStream, resultString);
-	EXPECT_EQ("SCH,00000005,LEE GILDONG5,CL1,010-1234-5678,19900101,ADV", resultString);
+	EXPECT_EQ("SCH,00000005,GILDONG5 LEE,CL1,010-1234-5678,19900101,ADV", resultString);
 	resultCheckStream.close();
 }

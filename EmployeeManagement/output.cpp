@@ -1,5 +1,5 @@
 #include "output.h"
-
+#include <algorithm>
 
 bool OutputToFile::Open(string path) {
 	fileStream.open(path);
@@ -33,6 +33,10 @@ bool OutputToFile::WriteLine(OP_CODE opCode, int resultCnt) {
 	return true;
 }
 
+bool compare(EmployeeInfo emp1, EmployeeInfo emp2) {
+	return emp1.employeeNum < emp2.employeeNum;
+}
+
 bool OutputToFile::WriteLine(OP_CODE opCode, vector<EmployeeInfo>& resultSet) {
 	if (false == fileStream.is_open())
 		return false;
@@ -44,7 +48,7 @@ bool OutputToFile::WriteLine(OP_CODE opCode, vector<EmployeeInfo>& resultSet) {
 		return true;
 	}
 
-	// TODO :: sorting...
+	sort(resultSet.begin(), resultSet.end(), compare);
 
 	for (auto value : resultSet) {
 		string eNum = ConvertEmployeeNumToStr(value.employeeNum);

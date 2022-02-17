@@ -35,6 +35,11 @@ public:
 		return true;
 	}
 
+	struct compare {
+		bool operator()(const EmployeeInfo& e1, const EmployeeInfo& e2) {
+			return e1.employeeNum > e2.employeeNum;
+		}
+	};
 
 	virtual vector<unsigned int> search(string option, string column, string param) override {
 		vector<unsigned int> result;
@@ -47,7 +52,7 @@ public:
 	}
 
 	virtual bool makeCopyFromParam(string option, string column, string param, EmployeeInfo& info) override {
-		assign(option, column, param, info);
+		assign(column, param, info);
 		return true; //TODO :: return
 	}
 
@@ -167,72 +172,45 @@ private:
 		return false;
 	}
 
-	void assignName(string option, string param, EmployeeInfo& target) {
-		if (option == "-f") {
-			target.name.first = param;
-		}
-		else if (option == "-l") {
-			target.name.last = param;
-		}
-		else { 
-			vector<string> vstr = split(param, ' ');
-			if (vstr.size() < 1) 
-				throw std::invalid_argument("invalid param. name is 2 words");
+	void assignName(string param, EmployeeInfo& target) {
+		vector<string> vstr = split(param, ' ');
+		if (vstr.size() < 1) 
+			throw std::invalid_argument("invalid param. name is 2 words");
 
-			target.name.first = split(param, ' ')[0];
-			target.name.last = split(param, ' ')[1];
-		}
+		target.name.first = split(param, ' ')[0];
+		target.name.last = split(param, ' ')[1];
 	}
-	void assignPhoneNum(string option, string param, EmployeeInfo& target) {
-		if (option == "-m") {
-			target.phoneNum.mid = stoi(param);
-		}
-		else if (option == "-l") {
-			target.phoneNum.end = stoi(param);
-		}
-		else { 
-			vector<string> vstr = split(param, '-');
-			if (vstr.size() < 2)
-				throw std::invalid_argument("invalid param. phone number is 3 digits");
+	void assignPhoneNum(string param, EmployeeInfo& target) {
+		vector<string> vstr = split(param, '-');
+		if (vstr.size() < 2)
+			throw std::invalid_argument("invalid param. phone number is 3 digits");
 
-			target.phoneNum.mid = stoi(vstr[1]);
-			target.phoneNum.end = stoi(vstr[2]);
-		}
+		target.phoneNum.mid = stoi(vstr[1]);
+		target.phoneNum.end = stoi(vstr[2]);
 	}
-	void assignBirthDay(string option, string param, EmployeeInfo& target) {
-		if (option == "-y") {
-			target.birthday.y = stoi(param);
-		}
-		else if (option == "-m") {
-			target.birthday.m = stoi(param);
-		}
-		else if (option == "-d") {
-			target.birthday.d = stoi(param);
-		}
-		else { 
-			if (param.size() < 8) 
-				throw std::invalid_argument("invalid param. phone number is 8 numbers");
+	void assignBirthDay( string param, EmployeeInfo& target) {
+		if (param.size() < 8) 
+			throw std::invalid_argument("invalid param. phone number is 8 numbers");
 
-			target.birthday.y = stoi(param.substr(0, 4));
-			target.birthday.m = stoi(param.substr(4, 2));
-			target.birthday.d = stoi(param.substr(6, 2));
-		}
+		target.birthday.y = stoi(param.substr(0, 4));
+		target.birthday.m = stoi(param.substr(4, 2));
+		target.birthday.d = stoi(param.substr(6, 2));
 	}
-	void assign(string option, string column, string param, EmployeeInfo& target) {
+	void assign(string column, string param, EmployeeInfo& target) {
 		if (column == "employeeNum") {
 			target.employeeNum = getFullYearEmployeeNum(param);
 		}
 		else if (column == "name") {
-			assignName(option, param, target);
+			assignName(param, target);
 		}
 		else if (column == "cl") {
 			target.cl = getCL(param);
 		}
 		else if (column == "phoneNum") {
-			assignPhoneNum(option, param, target);
+			assignPhoneNum(param, target);
 		}
 		else if (column == "birthday") {
-			assignBirthDay(option, param, target);
+			assignBirthDay(param, target);
 		}
 		else if (column == "certi") {
 			target.certi = getCerti(param);
@@ -241,6 +219,7 @@ private:
 			throw std::invalid_argument("invalid column. Column cosist name, cl, phoneNum, birthday, certi");
 		}
 	}
+
 
 	unordered_map<unsigned int, EmployeeInfo> employee_;
 };

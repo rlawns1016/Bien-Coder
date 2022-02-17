@@ -12,10 +12,14 @@ string Instruction::GetOption2() {
 	return this->option2_;
 }
 
-void InstructionAdd::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const EmployeeInfo& e) {
+void Instruction::SetInstruction(const OP_CODE op, const string opt1, const string opt2) {
 	this->operationCode_ = op;
 	this->option1_ = opt1;
 	this->option2_ = opt2;
+}
+
+void InstructionAdd::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const EmployeeInfo& e) {
+	Instruction::SetInstruction(op, opt1, opt2);
 	this->employee_ = e;
 }
 
@@ -24,9 +28,7 @@ void InstructionAdd::GetEmployeeInfo(EmployeeInfo& e) {
 }
 
 void InstructionDel::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue) {
-	this->operationCode_ = op;
-	this->option1_ = opt1;
-	this->option2_ = opt2;
+	Instruction::SetInstruction(op, opt1, opt2);
 	this->columnName_ = cName;
 	this->columnValue_ = cValue;
 }
@@ -37,9 +39,7 @@ void InstructionDel::GetColumnData(string& columnName, string& columnValue) {
 }
 
 void InstructionMod::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName1, const string cValue1, const string cName2, const string cValue2) {
-	this->operationCode_ = op;
-	this->option1_ = opt1;
-	this->option2_ = opt2;
+	Instruction::SetInstruction(op, opt1, opt2);
 	this->columnName1st_ = cName1;
 	this->columnValue1st_ = cValue1;
 	this->columnName2nd_ = cName2;
@@ -54,9 +54,7 @@ void InstructionMod::GetColumnData(string& columnName1st, string& columnValue1st
 }
 
 void InstructionSch::SetInstruction(const OP_CODE op, const string opt1, const string opt2, const string cName, const string cValue) {
-	this->operationCode_ = op;
-	this->option1_ = opt1;
-	this->option2_ = opt2;
+	Instruction::SetInstruction(op, opt1, opt2);
 	this->columnName_ = cName;
 	this->columnValue_ = cValue;
 }

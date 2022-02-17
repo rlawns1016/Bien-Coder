@@ -2,14 +2,6 @@
 #include <fstream>
 #include "mainFrame.h"
 
-enum class OP_CODE {
-	ADD,
-	DEL,
-	SCH,
-	MOD,
-	UNKNOWN
-};
-
 enum class OPTION_1 {
 	PRINT_EMPTY,
 	PRINT_WITH_5RECORD,

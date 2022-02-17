@@ -6,8 +6,7 @@
 #include "IDEL.h"
 #include "IMOD.h"
 #include "input.h"
-//#include "output.h"
-#include <fstream>
+#include "output.h"
 #include<string>
 
 #define ERROR_CODE_NO_ERROR				1
@@ -24,22 +23,21 @@ public:
 		//input
 		Instruction* ins = nullptr;
 		InputFromFile* input = new InputFromFile();
-		bool resultOpen = input->Open(inputFIleName);
+		bool isInputFileOpen = input->Open(inputFIleName);
 		//output
-
+		OutputToFile* output = new OutputToFile();
+		bool isOutputFileOpen = output->Open(outputFileName);
 		//db
 		IDataBase* db = new DataBase();
 		vector<EmployeeInfo> result;
-		ofstream outstream;
-		outstream.open(outputFileName, ios::out);
-
+		
 		//module
 		IADD* add = new ADD(db);
 		IDEL* del = new DEL(db);
 		ISCH* sch = new SCH(db);
 		IMOD* mod = new MOD(db);
 
-		if (!resultOpen)	ret = ERROR_CODE_CANNOT_OPEN_FILE;
+		if (!isInputFileOpen || !isOutputFileOpen)	ret = ERROR_CODE_CANNOT_OPEN_FILE;
 		else
 		{
 			while (input->ReadLine(&ins))
@@ -60,58 +58,14 @@ public:
 					string columnName, columnValue;
 					vector<EmployeeInfo> resultSet;
 					delIns->GetColumnData(columnName, columnValue);
-					int ret = del->execute(delIns->GetOption1(), delIns->GetOption2(), columnName, columnValue, resultSet);
-
-					//save result to outputFile		
-					string out;
-					if (resultSet.empty())
+					int ret = del->execute(delIns->GetOption1(), delIns->GetOption2(), columnName, columnValue, resultSet);				
+					if (delIns->GetOption1() == "-p")
 					{
-						if (ret == 0)
-						{
-							out = "DEL,NONE";
-						}
-						else
-						{
-							out = "DEL," + to_string(ret);
-						}
-						outstream << out << endl;
+						output->WriteLine(OP_CODE::DEL, resultSet);
 					}
 					else
 					{
-						for (auto e : resultSet)
-						{
-							out = "DEL," + to_string(e.employeeNum).substr(2,8) + "," + e.name.last + " " + e.name.first + ",";
-							switch (e.cl)
-							{
-							case CL::CL1:
-								out += "CL1,";
-								break;
-							case CL::CL2:
-								out += "CL2,";
-								break;
-							case CL::CL3:
-								out += "CL3,";
-								break;
-							case CL::CL4:
-								out += "CL4,";
-								break;
-							}
-							out += "010-" + to_string(e.phoneNum.mid) + "-" + to_string(e.phoneNum.end) + ",";
-							out += to_string(e.birthday.y) + to_string(e.birthday.m) + to_string(e.birthday.d) + ",";
-							switch (e.certi)
-							{
-							case CERTI::ADV:
-								out += "ADV";
-								break;
-							case CERTI::PRO:
-								out += "PRO";
-								break;
-							case CERTI::EX:
-								out += "EX";
-								break;
-							}
-							outstream << out << endl;
-						}
+						output->WriteLine(OP_CODE::DEL, ret);
 					}
 					break;
 				}
@@ -123,56 +77,13 @@ public:
 					schIns->GetColumnData(columnName, columnValue);
 					int ret = sch->execute(schIns->GetOption1(), schIns->GetOption2(), columnName, columnValue, resultSet);
 
-					//save result to outputFile
-					string out;
-					if (resultSet.empty())
+					if (schIns->GetOption1() == "-p")
 					{
-						if (ret == 0)
-						{
-							out = "SCH,NONE";
-						}
-						else
-						{
-							out = "SCH," + to_string(ret);
-						}
-						outstream << out << endl;
+						output->WriteLine(OP_CODE::SCH, resultSet);
 					}
 					else
 					{
-						for (auto e : resultSet)
-						{
-							out = "SCH," + to_string(e.employeeNum).substr(2, 8) + "," + e.name.last + " " + e.name.first + ",";
-							switch (e.cl)
-							{
-							case CL::CL1:
-								out += "CL1,";
-								break;
-							case CL::CL2:
-								out += "CL2,";
-								break;
-							case CL::CL3:
-								out += "CL3,";
-								break;
-							case CL::CL4:
-								out += "CL4,";
-								break;
-							}
-							out += "010-" + to_string(e.phoneNum.mid) + "-" + to_string(e.phoneNum.end) + ",";
-							out += to_string(e.birthday.y) + to_string(e.birthday.m) + to_string(e.birthday.d) + ",";
-							switch (e.certi)
-							{
-							case CERTI::ADV:
-								out += "ADV";
-								break;
-							case CERTI::PRO:
-								out += "PRO";
-								break;
-							case CERTI::EX:
-								out += "EX";
-								break;
-							}
-							outstream << out << endl;
-						}
+						output->WriteLine(OP_CODE::SCH, ret);
 					}
 					break;
 				}
@@ -181,60 +92,16 @@ public:
 					InstructionMod* modIns = (InstructionMod*)ins;
 					string col1, val1, col2, val2;
 					vector<EmployeeInfo> resultSet;
-					EmployeeInfo info;
 					modIns->GetColumnData(col1, val1, col2, val2);
-					int ret = mod->execute(modIns->GetOption1(), modIns->GetOption2(), col1, val1, col2, val2, resultSet, info);
+					int ret = mod->execute(modIns->GetOption1(), modIns->GetOption2(), col1, val1, col2, val2, resultSet);
 
-					//save result to outputFile
-					string out;
-					if (resultSet.empty())
+					if (modIns->GetOption1() == "-p")
 					{
-						if (ret == 0)
-						{
-							out = "MOD,NONE";
-						}
-						else
-						{
-							out = "MOD," + to_string(ret);
-						}
-						outstream << out << endl;
+						output->WriteLine(OP_CODE::MOD, resultSet);
 					}
 					else
 					{
-						for (auto e : resultSet)
-						{
-							out = "MOD," + to_string(e.employeeNum).substr(2, 8) + "," + e.name.last + " " + e.name.first + ",";
-							switch (e.cl)
-							{
-							case CL::CL1:
-								out += "CL1,";
-								break;
-							case CL::CL2:
-								out += "CL2,";
-								break;
-							case CL::CL3:
-								out += "CL3,";
-								break;
-							case CL::CL4:
-								out += "CL4,";
-								break;
-							}
-							out += "010-" + to_string(e.phoneNum.mid) + "-" + to_string(e.phoneNum.end) + ",";
-							out += to_string(e.birthday.y) + to_string(e.birthday.m) + to_string(e.birthday.d) + ",";
-							switch (e.certi)
-							{
-							case CERTI::ADV:
-								out += "ADV";
-								break;
-							case CERTI::PRO:
-								out += "PRO";
-								break;
-							case CERTI::EX:
-								out += "EX";
-								break;
-							}
-							outstream << out << endl;
-						}
+						output->WriteLine(OP_CODE::MOD, ret);
 					}
 					break;
 				}
@@ -245,7 +112,9 @@ public:
 			}
 		}
 		
-		outstream.close();
+		input->Close();
+		output->Close();
+
 		return ret;
 	}
 

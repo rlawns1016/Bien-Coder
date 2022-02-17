@@ -3,6 +3,7 @@
 #include <iostream>
 #include "mainFrame.h"
 #include <unordered_map>
+#include <sstream>
 
 struct IDataBase {
 	virtual vector<unsigned int> search(string option, string column, string param) = 0;
@@ -79,15 +80,15 @@ private:
 		if (cl == "CL1") return CL1;
 		else if (cl == "CL2") return CL2;
 		else if (cl == "CL3") return CL3;
-		else /*if (cl == "CL4")*/ return CL4;
-		//TODO :: invalid CL
+		else if (cl == "CL4") return CL4;
+		else throw std::invalid_argument("invalid CL");
 	}
 
 	CERTI getCerti(string certi) {
 		if (certi == "ADV") return ADV;
 		else if (certi == "PRO") return PRO;
-		else /*if (certi == "EX")*/ return EX;
-		//TODO :: invalid certi
+		else if (certi == "EX") return EX;
+		else throw std::invalid_argument("invalid CL");
 	}
 
 	bool compareName(string option, string param, EmployeeInfo target) {
@@ -97,9 +98,12 @@ private:
 		else if (option == "-l") {
 			return target.name.last == param;
 		}
-		else { //TODO :: check invalid option ?
-			//TODO :: check valid param ? -> is exist space..
-			return (target.name.first == split(param, ' ')[0] && target.name.last == split(param, ' ')[1]);
+		else {
+			vector<string> vstr = split(param, ' ');
+			if (vstr.size() < 1)
+				throw std::invalid_argument("invalid param. name is 2 words");
+
+			return (target.name.first == vstr[0] && target.name.last == vstr[1]);
 		}
 	}
 	bool comparePhoneNum(string option, string param, EmployeeInfo target) {
@@ -109,10 +113,13 @@ private:
 		else if (option == "-l") {
 			return target.phoneNum.end == stoi(param);
 		}
-		else { //TODO :: check invalid option ?
-			//TODO :: check valid param ? -> is exist space..
-			return (target.phoneNum.mid == stoi(split(param, '-')[1])
-				&& target.phoneNum.end == stoi(split(param, '-')[2]));
+		else { 
+			vector<string> vstr = split(param, '-');
+			if( vstr.size() < 2) 
+				throw std::invalid_argument("invalid param. phone number is 3 digits");
+
+			return (target.phoneNum.mid == stoi(vstr[1])
+				&& target.phoneNum.end == stoi(vstr[2]));
 		}
 	}
 	bool compareBirthDay(string option, string param, EmployeeInfo target) {
@@ -125,8 +132,10 @@ private:
 		else if (option == "-d") {
 			return target.birthday.d == stoi(param);
 		}
-		else { //TODO :: check invalid option ?
-			//TODO :: check valid param ? -> is exist space..
+		else { 
+			if (param.size() < 8) 
+				throw std::invalid_argument("invalid param. birthday is 8 numbers");
+
 			return (target.birthday.y == stoi(param.substr(0, 4))
 				&& target.birthday.m == stoi(param.substr(4, 2))
 				&& target.birthday.d == stoi(param.substr(6, 2)));
@@ -152,6 +161,9 @@ private:
 		else if (column == "certi") {
 			return getCerti(param) == target.certi;
 		}
+		else {
+			throw std::invalid_argument("invalid column. Column cosist name, cl, phoneNum, birthday, certi");
+		}
 		return false;
 	}
 
@@ -162,8 +174,11 @@ private:
 		else if (option == "-l") {
 			target.name.last = param;
 		}
-		else { //TODO :: check invalid option ?
-			//TODO :: check valid param ? -> is exist space..
+		else { 
+			vector<string> vstr = split(param, ' ');
+			if (vstr.size() < 1) 
+				throw std::invalid_argument("invalid param. name is 2 words");
+
 			target.name.first = split(param, ' ')[0];
 			target.name.last = split(param, ' ')[1];
 		}
@@ -175,10 +190,13 @@ private:
 		else if (option == "-l") {
 			target.phoneNum.end = stoi(param);
 		}
-		else { //TODO :: check invalid option ?
-			//TODO :: check valid param ? -> is exist space..
-			target.phoneNum.mid = stoi(split(param, '-')[1]);
-			target.phoneNum.end = stoi(split(param, '-')[2]);
+		else { 
+			vector<string> vstr = split(param, '-');
+			if (vstr.size() < 2)
+				throw std::invalid_argument("invalid param. phone number is 3 digits");
+
+			target.phoneNum.mid = stoi(vstr[1]);
+			target.phoneNum.end = stoi(vstr[2]);
 		}
 	}
 	void assignBirthDay(string option, string param, EmployeeInfo& target) {
@@ -191,8 +209,10 @@ private:
 		else if (option == "-d") {
 			target.birthday.d = stoi(param);
 		}
-		else { //TODO :: check invalid option ?
-			//TODO :: check valid param ? -> is exist space..
+		else { 
+			if (param.size() < 8) 
+				throw std::invalid_argument("invalid param. phone number is 8 numbers");
+
 			target.birthday.y = stoi(param.substr(0, 4));
 			target.birthday.m = stoi(param.substr(4, 2));
 			target.birthday.d = stoi(param.substr(6, 2));
@@ -216,6 +236,9 @@ private:
 		}
 		else if (column == "certi") {
 			target.certi = getCerti(param);
+		}
+		else {
+			throw std::invalid_argument("invalid column. Column cosist name, cl, phoneNum, birthday, certi");
 		}
 	}
 

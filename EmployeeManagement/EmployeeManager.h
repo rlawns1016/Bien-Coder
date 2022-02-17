@@ -7,6 +7,7 @@
 #include "IMOD.h"
 #include "input.h"
 //#include "output.h"
+#include <fstream>
 #include<string>
 
 #define ERROR_CODE_NO_ERROR				1
@@ -24,12 +25,14 @@ public:
 		Instruction* ins = nullptr;
 		InputFromFile* input = new InputFromFile();
 		bool resultOpen = input->Open(inputFIleName);
-		
+
 		//output
 
 		//db
 		IDataBase* db = new DataBase();
 		vector<EmployeeInfo> result;
+		ofstream outstream;
+		outstream.open(outputFileName, ios::out);
 
 		if (!resultOpen)	ret = ERROR_CODE_CANNOT_OPEN_FILE;
 		else
@@ -55,8 +58,58 @@ public:
 					vector<EmployeeInfo> resultSet;
 					delIns->GetColumnData(columnName, columnValue);
 					int ret = del->execute(delIns->GetOption1(), delIns->GetOption2(), columnName, columnValue, resultSet);
-					
-					//save result to outputFile
+
+					//save result to outputFile		
+					string out;
+					if (resultSet.empty())
+					{
+						if (ret == 0)
+						{
+							out = "DEL,NONE";
+						}
+						else
+						{
+							out = "DEL," + to_string(ret);
+						}
+						outstream << out << endl;
+					}
+					else
+					{
+						for (auto e : resultSet)
+						{
+							out = "DEL," + to_string(e.employeeNum).substr(2,8) + "," + e.name.last + " " + e.name.first + ",";
+							switch (e.cl)
+							{
+							case CL::CL1:
+								out += "CL1,";
+								break;
+							case CL::CL2:
+								out += "CL2,";
+								break;
+							case CL::CL3:
+								out += "CL3,";
+								break;
+							case CL::CL4:
+								out += "CL4,";
+								break;
+							}
+							out += "010-" + to_string(e.phoneNum.mid) + "-" + to_string(e.phoneNum.end) + ",";
+							out += to_string(e.birthday.y) + to_string(e.birthday.m) + to_string(e.birthday.d) + ",";
+							switch (e.certi)
+							{
+							case CERTI::ADV:
+								out += "ADV";
+								break;
+							case CERTI::PRO:
+								out += "PRO";
+								break;
+							case CERTI::EX:
+								out += "EX";
+								break;
+							}
+							outstream << out << endl;
+						}
+					}
 					break;
 				}
 				case OP_CODE::SCH:
@@ -69,18 +122,119 @@ public:
 					int ret = sch->execute(schIns->GetOption1(), schIns->GetOption2(), columnName, columnValue, resultSet);
 
 					//save result to outputFile
+					string out;
+					if (resultSet.empty())
+					{
+						if (ret == 0)
+						{
+							out = "SCH,NONE";
+						}
+						else
+						{
+							out = "SCH," + to_string(ret);
+						}
+						outstream << out << endl;
+					}
+					else
+					{
+						for (auto e : resultSet)
+						{
+							out = "SCH," + to_string(e.employeeNum).substr(2, 8) + "," + e.name.last + " " + e.name.first + ",";
+							switch (e.cl)
+							{
+							case CL::CL1:
+								out += "CL1,";
+								break;
+							case CL::CL2:
+								out += "CL2,";
+								break;
+							case CL::CL3:
+								out += "CL3,";
+								break;
+							case CL::CL4:
+								out += "CL4,";
+								break;
+							}
+							out += "010-" + to_string(e.phoneNum.mid) + "-" + to_string(e.phoneNum.end) + ",";
+							out += to_string(e.birthday.y) + to_string(e.birthday.m) + to_string(e.birthday.d) + ",";
+							switch (e.certi)
+							{
+							case CERTI::ADV:
+								out += "ADV";
+								break;
+							case CERTI::PRO:
+								out += "PRO";
+								break;
+							case CERTI::EX:
+								out += "EX";
+								break;
+							}
+							outstream << out << endl;
+						}
+					}
 					break;
 				}
 				case OP_CODE::MOD:
 				{
 					IMOD* mod = new MOD(db);
 					InstructionMod* modIns = (InstructionMod*)ins;
-					string columnName, columnValue;
+					string col1, val1, col2, val2;
 					vector<EmployeeInfo> resultSet;
-					modIns->GetColumnData(columnName, columnValue);
-					int ret = mod->execute(modIns->GetOption1(), modIns->GetOption2(), columnName, columnValue, resultSet);
-					
+					EmployeeInfo info;
+					modIns->GetColumnData(col1, val1, col2, val2);
+					int ret = mod->execute(modIns->GetOption1(), modIns->GetOption2(), col1, val1, col2, val2, resultSet, info);
+
 					//save result to outputFile
+					string out;
+					if (resultSet.empty())
+					{
+						if (ret == 0)
+						{
+							out = "MOD,NONE";
+						}
+						else
+						{
+							out = "MOD," + to_string(ret);
+						}
+						outstream << out << endl;
+					}
+					else
+					{
+						for (auto e : resultSet)
+						{
+							out = "MOD," + to_string(e.employeeNum).substr(2, 8) + "," + e.name.last + " " + e.name.first + ",";
+							switch (e.cl)
+							{
+							case CL::CL1:
+								out += "CL1,";
+								break;
+							case CL::CL2:
+								out += "CL2,";
+								break;
+							case CL::CL3:
+								out += "CL3,";
+								break;
+							case CL::CL4:
+								out += "CL4,";
+								break;
+							}
+							out += "010-" + to_string(e.phoneNum.mid) + "-" + to_string(e.phoneNum.end) + ",";
+							out += to_string(e.birthday.y) + to_string(e.birthday.m) + to_string(e.birthday.d) + ",";
+							switch (e.certi)
+							{
+							case CERTI::ADV:
+								out += "ADV";
+								break;
+							case CERTI::PRO:
+								out += "PRO";
+								break;
+							case CERTI::EX:
+								out += "EX";
+								break;
+							}
+							outstream << out << endl;
+						}
+					}
 					break;
 				}
 				default:
@@ -89,11 +243,12 @@ public:
 				}
 			}
 		}
-
+		
+		outstream.close();
 		return ret;
 	}
 
 
-private:	
+private:
 
 };

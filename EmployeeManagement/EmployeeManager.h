@@ -12,7 +12,6 @@
 #define ERROR_CODE_NO_ERROR				1
 #define ERROR_CODE_INVALID_INSTRUCTION	-1
 #define ERROR_CODE_CANNOT_OPEN_FILE		-2
-#define ERROR_CODE_CANNOT_READ_LINE		-3
 
 class EmployeeManager {
 public:
@@ -52,8 +51,11 @@ public:
 				{
 					IDEL* del = new DEL(db);
 					InstructionDel* delIns = (InstructionDel*)ins;
-					//virtual int execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet)
-					//del->execute(delIns->GetOption1(), delIns->GetOption2(), "", string param, vector<EmployeeInfo>& resultSet)
+					string columnName, columnValue;
+					vector<EmployeeInfo> resultSet;
+					delIns->GetColumnData(columnName, columnValue);
+					int ret = del->execute(delIns->GetOption1(), delIns->GetOption2(), columnName, columnValue, resultSet);
+					
 					//save result to outputFile
 					break;
 				}
@@ -61,8 +63,11 @@ public:
 				{
 					ISCH* sch = new SCH(db);
 					InstructionSch* schIns = (InstructionSch*)ins;
-					//execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet)
-					//sch->execute(~);
+					string columnName, columnValue;
+					vector<EmployeeInfo> resultSet;
+					schIns->GetColumnData(columnName, columnValue);
+					int ret = sch->execute(schIns->GetOption1(), schIns->GetOption2(), columnName, columnValue, resultSet);
+
 					//save result to outputFile
 					break;
 				}
@@ -70,9 +75,11 @@ public:
 				{
 					IMOD* mod = new MOD(db);
 					InstructionMod* modIns = (InstructionMod*)ins;
-					EmployeeInfo info;
-					//execute(string option1, string option2, string column, string param, vector<EmployeeInfo>& resultSet, const EmployeeInfo& info)
-					//mod->execute(~);
+					string columnName, columnValue;
+					vector<EmployeeInfo> resultSet;
+					modIns->GetColumnData(columnName, columnValue);
+					int ret = mod->execute(modIns->GetOption1(), modIns->GetOption2(), columnName, columnValue, resultSet);
+					
 					//save result to outputFile
 					break;
 				}

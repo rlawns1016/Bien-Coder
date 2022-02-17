@@ -25,7 +25,6 @@ public:
 		Instruction* ins = nullptr;
 		InputFromFile* input = new InputFromFile();
 		bool resultOpen = input->Open(inputFIleName);
-
 		//output
 
 		//db
@@ -33,6 +32,12 @@ public:
 		vector<EmployeeInfo> result;
 		ofstream outstream;
 		outstream.open(outputFileName, ios::out);
+
+		//module
+		IADD* add = new ADD(db);
+		IDEL* del = new DEL(db);
+		ISCH* sch = new SCH(db);
+		IMOD* mod = new MOD(db);
 
 		if (!resultOpen)	ret = ERROR_CODE_CANNOT_OPEN_FILE;
 		else
@@ -43,7 +48,6 @@ public:
 				{
 				case OP_CODE::ADD:
 				{
-					IADD* add = new ADD(db);
 					InstructionAdd* addIns = (InstructionAdd*)ins;
 					EmployeeInfo info;
 					addIns->GetEmployeeInfo(info);
@@ -52,7 +56,6 @@ public:
 				}
 				case OP_CODE::DEL:
 				{
-					IDEL* del = new DEL(db);
 					InstructionDel* delIns = (InstructionDel*)ins;
 					string columnName, columnValue;
 					vector<EmployeeInfo> resultSet;
@@ -114,7 +117,6 @@ public:
 				}
 				case OP_CODE::SCH:
 				{
-					ISCH* sch = new SCH(db);
 					InstructionSch* schIns = (InstructionSch*)ins;
 					string columnName, columnValue;
 					vector<EmployeeInfo> resultSet;
@@ -176,7 +178,6 @@ public:
 				}
 				case OP_CODE::MOD:
 				{
-					IMOD* mod = new MOD(db);
 					InstructionMod* modIns = (InstructionMod*)ins;
 					string col1, val1, col2, val2;
 					vector<EmployeeInfo> resultSet;

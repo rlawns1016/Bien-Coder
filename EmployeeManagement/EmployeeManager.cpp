@@ -12,13 +12,15 @@ int EmployeeManager::run(string inputFIleName, string outputFileName)
 	bool isOutputFileOpen = output->Open(outputFileName);
 	//db
 	IDataBase* db = new DataBase();
-	vector<EmployeeInfo> result;
+	vector<EmployeeInfo> resultSet;
 
 	//module
-	IADD* add = new ADD(db);
-	IDEL* del = new DEL(db);
-	ISCH* sch = new SCH(db);
-	IMOD* mod = new MOD(db);
+	Module* mod = nullptr;
+	AddModule* addModule = new AddModule();
+	DelModule* delModule = new DelModule();
+	SchModule* schModule = new SchModule();
+	ModModule* modModule = new ModModule();
+
 
 	if (!isInputFileOpen || !isOutputFileOpen)
 	{
@@ -34,34 +36,47 @@ int EmployeeManager::run(string inputFIleName, string outputFileName)
 			{
 			case OP_CODE::ADD:
 			{
-				runAdd(add, ins, output);
+				mod = addModule;
 				break;
 			}
 			case OP_CODE::DEL:
 			{
-				resultCnt = runDel(del, ins, output, result);
+				mod = delModule;
 				break;
 			}
 			case OP_CODE::SCH:
 			{
-				resultCnt = runSch(sch, ins, output, result);
+				mod = schModule;
 				break;
 			}
 			case OP_CODE::MOD:
 			{
-				resultCnt = runMod(mod, ins, output, result);
+				mod = modModule;
 				break;
 			}
 			default:
 				ret = ERROR_CODE_INVALID_INSTRUCTION;
 				break;
 			}
-			if (ret != ERROR_CODE_NO_ERROR)	break;
-			writeToOutputFile(opCode, ins->GetOption1() == "-p", output, result, resultCnt);
+			
+			if (ret != ERROR_CODE_NO_ERROR)
+			{
+				break;
+			}
+			
+			resultCnt = mod->run(db, ins, resultSet);
+
+			writeToOutputFile(opCode, ins->GetOption1() == "-p", output, resultSet, resultCnt);
 		}
 	}
 	input->Close();
 	output->Close();
+
+	delete db;
+	delete addModule;
+	delete delModule;
+	delete schModule;
+	delete modModule;
 
 	return ret;
 }
@@ -79,34 +94,3 @@ void EmployeeManager::writeToOutputFile(OP_CODE opCode, bool isPOption, OutputTo
 	}
 }
 
-void EmployeeManager::runAdd(IADD* add, Instruction* ins, OutputToFile* outStream)
-{
-	InstructionAdd* addIns = (InstructionAdd*)ins;
-	EmployeeInfo info;
-	addIns->GetEmployeeInfo(info);
-	add->execute(info);
-}
-
-int EmployeeManager::runDel(IDEL* del, Instruction* ins, OutputToFile* outStream, vector<EmployeeInfo>& resultSet)
-{
-	InstructionDel* delIns = (InstructionDel*)ins;
-	string columnName, columnValue;
-	delIns->GetColumnData(columnName, columnValue);
-	return del->execute(delIns->GetOption1(), delIns->GetOption2(), columnName, columnValue, resultSet);
-}
-
-int EmployeeManager::runSch(ISCH* sch, Instruction* ins, OutputToFile* outStream, vector<EmployeeInfo>& resultSet)
-{
-	InstructionSch* schIns = (InstructionSch*)ins;
-	string columnName, columnValue;
-	schIns->GetColumnData(columnName, columnValue);
-	return sch->execute(schIns->GetOption1(), schIns->GetOption2(), columnName, columnValue, resultSet);
-}
-
-int EmployeeManager::runMod(IMOD* mod, Instruction* ins, OutputToFile* outStream, vector<EmployeeInfo>& resultSet)
-{
-	InstructionMod* modIns = (InstructionMod*)ins;
-	string col1, val1, col2, val2;
-	modIns->GetColumnData(col1, val1, col2, val2);
-	return mod->execute(modIns->GetOption1(), modIns->GetOption2(), col1, val1, col2, val2, resultSet);
-}

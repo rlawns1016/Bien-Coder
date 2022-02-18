@@ -24,11 +24,14 @@ class AddModule : public Module {
 public : 
 	virtual int run(IDataBase* db, Instruction* ins, vector<EmployeeInfo>& resultSet) override
 	{
+		int ret = 0;
 		IADD* add = new ADD(db);
 		InstructionAdd* addIns = (InstructionAdd*)ins;
 		EmployeeInfo info;
 		addIns->GetEmployeeInfo(info);
-		return add->execute(info);
+		ret = add->execute(info);
+		delete add;
+		return ret;
 	}
 };
 
@@ -36,11 +39,14 @@ class DelModule : public Module {
 public:
 	virtual int run(IDataBase* db, Instruction* ins, vector<EmployeeInfo>& resultSet) override
 	{
+		int ret = 0;
 		IDEL* del = new DEL(db);
 		InstructionDel* delIns = (InstructionDel*)ins;
 		string columnName, columnValue;
 		delIns->GetColumnData(columnName, columnValue);
-		return del->execute(delIns->GetOption1(), delIns->GetOption2(), columnName, columnValue, resultSet);
+		ret = del->execute(delIns->GetOption1(), delIns->GetOption2(), columnName, columnValue, resultSet);
+		delete del;
+		return ret;
 	}
 };
 
@@ -48,11 +54,14 @@ class SchModule : public Module {
 public:
 	virtual int run(IDataBase* db, Instruction* ins, vector<EmployeeInfo>& resultSet) override
 	{
+		int ret = 0;
 		ISCH* sch = new SCH(db);
 		InstructionSch* schIns = (InstructionSch*)ins;
 		string columnName, columnValue;
 		schIns->GetColumnData(columnName, columnValue);
-		return sch->execute(schIns->GetOption1(), schIns->GetOption2(), columnName, columnValue, resultSet);
+		ret = sch->execute(schIns->GetOption1(), schIns->GetOption2(), columnName, columnValue, resultSet);
+		delete sch;
+		return ret;
 	}
 };
 
@@ -60,11 +69,14 @@ class ModModule : public Module {
 public:
 	virtual int run(IDataBase* db, Instruction* ins, vector<EmployeeInfo>& resultSet) override
 	{
+		int ret = 0;
 		IMOD* mod = new MOD(db);
 		InstructionMod* modIns = (InstructionMod*)ins;
 		string col1, val1, col2, val2;
 		modIns->GetColumnData(col1, val1, col2, val2);
-		return mod->execute(modIns->GetOption1(), modIns->GetOption2(), col1, val1, col2, val2, resultSet);
+		ret = mod->execute(modIns->GetOption1(), modIns->GetOption2(), col1, val1, col2, val2, resultSet);
+		delete mod;
+		return ret;
 	}
 };
 

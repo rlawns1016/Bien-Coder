@@ -17,12 +17,12 @@ public:
 		vector<unsigned int> pks;
 
 		int result = 0;
-
+		EmployeeResultSet rsltSet;
 		pks = db_->search(option2, column, param);
 		for (auto aKey : pks) {
 			if (option1 == "-p") {
 				if (new_column != "employeeNum") {
-					resultSet.push_back(*db_->getEmployeeInfo(aKey));
+					rsltSet.insert(*db_->getEmployeeInfo(aKey));
 				}
 			}
 			if (new_column != "employeeNum") {
@@ -36,6 +36,7 @@ public:
 #endif
 			}
 		}
+		rsltSet.toVector(resultSet);
 		return result;
 	}
 private:

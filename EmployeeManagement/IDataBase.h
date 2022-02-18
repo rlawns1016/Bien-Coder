@@ -4,6 +4,8 @@
 #include "mainFrame.h"
 #include <unordered_map>
 #include <sstream>
+#include "EmployeeResultSet.h"
+#include "util.h"
 
 struct IDataBase {
 	virtual vector<unsigned int> search(string option, string column, string param) = 0;
@@ -15,9 +17,105 @@ struct IDataBase {
 	virtual unsigned int getEmployeeCount() = 0;
 };
 
+struct ColumnCompare {
+	enum {
+		eID, eName, eCL, ePhone, eBirth, eCerti
+	};
+	virtual bool compare(string option, string param, EmployeeInfo target) = 0;
+};
+
+struct ColumnCompareID : public ColumnCompare {
+	virtual bool compare(string option, string param, EmployeeInfo target) {
+		return Util::getFullYearEmployeeNum(param) == target.employeeNum;
+	}
+};
+
+struct ColumnCompareName : public ColumnCompare {
+	virtual bool compare(string option, string param, EmployeeInfo target) {
+		if (option == "-f") {
+			return target.name.first == param;
+		}
+		else if (option == "-l") {
+			return target.name.last == param;
+		}
+		else {
+			vector<string> vstr = Util::split(param, ' ');
+			if (vstr.size() < 1)
+				throw std::invalid_argument("invalid param. name is 2 words");
+
+			return (target.name.first == vstr[0] && target.name.last == vstr[1]);
+		}
+	}
+};
+
+struct ColumnCompareCerti : public ColumnCompare {
+	virtual bool compare(string option, string param, EmployeeInfo target) {
+		return Util::getCerti(param) == target.certi;
+	}
+};
+
+struct ColumnComparePhoneNum : public ColumnCompare {
+	virtual bool compare(string option, string param, EmployeeInfo target) {
+		if (option == "-m") {
+			return target.phoneNum.mid == stoi(param);
+		}
+		else if (option == "-l") {
+			return target.phoneNum.end == stoi(param);
+		}
+		else {
+			vector<string> vstr = Util::split(param, '-');
+			if (vstr.size() < 2)
+				throw std::invalid_argument("invalid param. phone number is 3 digits");
+
+			return (target.phoneNum.mid == stoi(vstr[1])
+				&& target.phoneNum.end == stoi(vstr[2]));
+		}
+	}
+};
+
+struct ColumnCompareBirthDay : public ColumnCompare {
+	virtual bool compare(string option, string param, EmployeeInfo target) {
+		if (option == "-y") {
+			return target.birthday.y == stoi(param);
+		}
+		else if (option == "-m") {
+			return target.birthday.m == stoi(param);
+		}
+		else if (option == "-d") {
+			return target.birthday.d == stoi(param);
+		}
+		else {
+			if (param.size() < 8)
+				throw std::invalid_argument("invalid param. birthday is 8 numbers");
+
+			return (target.birthday.y == stoi(param.substr(0, 4))
+				&& target.birthday.m == stoi(param.substr(4, 2))
+				&& target.birthday.d == stoi(param.substr(6, 2)));
+		}
+	}
+};
+
+struct ColumnCompareCL : public ColumnCompare {
+	virtual bool compare(string option, string param, EmployeeInfo target) {
+		return Util::getCL(param) == target.cl;
+	}
+};
+
 class DataBase : public IDataBase {
 public:
 	DataBase() {
+		comp[ColumnCompare::eID] = new ColumnCompareID();
+		comp[ColumnCompare::eName] = new ColumnCompareName();
+		comp[ColumnCompare::eCL] = new ColumnCompareCL();
+		comp[ColumnCompare::ePhone] = new ColumnComparePhoneNum();
+		comp[ColumnCompare::eBirth] = new ColumnCompareBirthDay();
+		comp[ColumnCompare::eCerti] = new ColumnCompareCerti();
+	}
+
+	virtual ~DataBase() {
+		for (int i = 0; i <= ColumnCompare::eCerti; i++) {
+			delete comp[i];
+		}
 	}
 
 	virtual bool erase(unsigned int employeeNum) override {
@@ -34,12 +132,6 @@ public:
 		employee_[employeeNum] = newInfo;
 		return true;
 	}
-
-	struct compare {
-		bool operator()(const EmployeeInfo& e1, const EmployeeInfo& e2) {
-			return e1.employeeNum > e2.employeeNum;
-		}
-	};
 
 	virtual vector<unsigned int> search(string option, string column, string param) override {
 		vector<unsigned int> result;
@@ -66,105 +158,26 @@ public:
 	}
 
 private:
-	vector<string> split(string str, char delimiter) {
-		vector<string> internal;
-		stringstream ss(str);
-		string temp;
-		while (getline(ss, temp, delimiter)) {
-			internal.push_back(temp);
-		}
-		return internal;
-	}
-
-	unsigned int getFullYearEmployeeNum(string employeeNum) {
-		int num = stoi(employeeNum);
-		return (num >= 69000000) ? num + 1900000000 : num + 2000000000;
-	}
-
-	CL getCL(string cl) {
-		if (cl == "CL1") return CL1;
-		else if (cl == "CL2") return CL2;
-		else if (cl == "CL3") return CL3;
-		else if (cl == "CL4") return CL4;
-		else throw std::invalid_argument("invalid CL");
-	}
-
-	CERTI getCerti(string certi) {
-		if (certi == "ADV") return ADV;
-		else if (certi == "PRO") return PRO;
-		else if (certi == "EX") return EX;
-		else throw std::invalid_argument("invalid CL");
-	}
-
-	bool compareName(string option, string param, EmployeeInfo target) {
-		if (option == "-f") {
-			return target.name.first == param;
-		}
-		else if (option == "-l") {
-			return target.name.last == param;
-		}
-		else {
-			vector<string> vstr = split(param, ' ');
-			if (vstr.size() < 1)
-				throw std::invalid_argument("invalid param. name is 2 words");
-
-			return (target.name.first == vstr[0] && target.name.last == vstr[1]);
-		}
-	}
-	bool comparePhoneNum(string option, string param, EmployeeInfo target) {
-		if (option == "-m") {
-			return target.phoneNum.mid == stoi(param);
-		}
-		else if (option == "-l") {
-			return target.phoneNum.end == stoi(param);
-		}
-		else { 
-			vector<string> vstr = split(param, '-');
-			if( vstr.size() < 2) 
-				throw std::invalid_argument("invalid param. phone number is 3 digits");
-
-			return (target.phoneNum.mid == stoi(vstr[1])
-				&& target.phoneNum.end == stoi(vstr[2]));
-		}
-	}
-	bool compareBirthDay(string option, string param, EmployeeInfo target) {
-		if (option == "-y") {
-			return target.birthday.y == stoi(param);
-		}
-		else if (option == "-m") {
-			return target.birthday.m == stoi(param);
-		}
-		else if (option == "-d") {
-			return target.birthday.d == stoi(param);
-		}
-		else { 
-			if (param.size() < 8) 
-				throw std::invalid_argument("invalid param. birthday is 8 numbers");
-
-			return (target.birthday.y == stoi(param.substr(0, 4))
-				&& target.birthday.m == stoi(param.substr(4, 2))
-				&& target.birthday.d == stoi(param.substr(6, 2)));
-		}
-	}
 
 	bool compare(string option, string column, string param, EmployeeInfo target) {
+
 		if (column == "employeeNum") {
-			return getFullYearEmployeeNum(param) == target.employeeNum;
+			return comp[ColumnCompare::eID]->compare(option, param, target);
 		}
 		else if (column == "name") {
-			return compareName(option, param, target);
+			return comp[ColumnCompare::eName]->compare(option, param, target);
 		}
 		else if (column == "cl") {
-			return getCL(param) == target.cl;
+			return comp[ColumnCompare::eCL]->compare(option, param, target);
 		}
 		else if (column == "phoneNum") {
-			return comparePhoneNum(option, param, target);
+			return comp[ColumnCompare::ePhone]->compare(option, param, target);
 		}
 		else if (column == "birthday") {
-			return compareBirthDay(option, param, target);
+			return comp[ColumnCompare::eBirth]->compare(option, param, target);
 		}
 		else if (column == "certi") {
-			return getCerti(param) == target.certi;
+			return comp[ColumnCompare::eCerti]->compare(option, param, target);
 		}
 		else {
 			throw std::invalid_argument("invalid column. Column cosist name, cl, phoneNum, birthday, certi");
@@ -173,15 +186,15 @@ private:
 	}
 
 	void assignName(string param, EmployeeInfo& target) {
-		vector<string> vstr = split(param, ' ');
+		vector<string> vstr = Util::split(param, ' ');
 		if (vstr.size() < 1) 
 			throw std::invalid_argument("invalid param. name is 2 words");
 
-		target.name.first = split(param, ' ')[0];
-		target.name.last = split(param, ' ')[1];
+		target.name.first = vstr[0];
+		target.name.last = vstr[1];
 	}
 	void assignPhoneNum(string param, EmployeeInfo& target) {
-		vector<string> vstr = split(param, '-');
+		vector<string> vstr = Util::split(param, '-');
 		if (vstr.size() < 2)
 			throw std::invalid_argument("invalid param. phone number is 3 digits");
 
@@ -198,13 +211,13 @@ private:
 	}
 	void assign(string column, string param, EmployeeInfo& target) {
 		if (column == "employeeNum") {
-			target.employeeNum = getFullYearEmployeeNum(param);
+			target.employeeNum = Util::getFullYearEmployeeNum(param);
 		}
 		else if (column == "name") {
 			assignName(param, target);
 		}
 		else if (column == "cl") {
-			target.cl = getCL(param);
+			target.cl = Util::getCL(param);
 		}
 		else if (column == "phoneNum") {
 			assignPhoneNum(param, target);
@@ -213,14 +226,14 @@ private:
 			assignBirthDay(param, target);
 		}
 		else if (column == "certi") {
-			target.certi = getCerti(param);
+			target.certi = Util::getCerti(param);
 		}
 		else {
 			throw std::invalid_argument("invalid column. Column cosist name, cl, phoneNum, birthday, certi");
 		}
 	}
 
-
 	unordered_map<unsigned int, EmployeeInfo> employee_;
+	ColumnCompare* comp[6];
 };
 
